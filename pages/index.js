@@ -2,7 +2,7 @@ import React,{useState,useEffect} from "react";
 import axios from "axios"
 import { toast,ToastContainer } from "react-toastify"
 import Router from 'next/router'
-import { getSession,getProviders, signIn, signOut,useSession } from "next-auth/react"
+import { getSession,getProviders, signIn,useSession } from "next-auth/react"
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link"
 import Image from 'next/image'
@@ -45,10 +45,10 @@ export default function Home(props) {
 
   useEffect(()=>{
     console.log(status)
-    if(session == null )
-    {
-        signOut()
-    }
+    // if(session == null )
+    // {
+    //     signOut()
+    // }
     
     if(status=="authenticated"){
         Router.push('/dashboard')
