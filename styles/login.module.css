@@ -1,0 +1,26 @@
+.loginBackground
+{
+  background-color: #0A1931;
+  width: 100%;
+  height: 100vh;
+}
+
+.loginCols
+{
+    height: 100vh;
+}
+
+.loginCard{
+    width: 500px;
+}
+
+.loginCardImage
+{
+    width: 200px !important;
+}
+
+.imageCard
+{
+    width: 250px;
+    background-color: #FFFFFF;
+}
