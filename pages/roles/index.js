@@ -5,7 +5,6 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useUserValue } from '../../contexts/UserContext'
 import { actionTypes } from "../../contexts/userReducer"
 import axios from 'axios';
-import $ from "jquery"
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'

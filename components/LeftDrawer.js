@@ -10,10 +10,12 @@ import {
     DrawerContent,
     DrawerCloseButton,
   } from '@chakra-ui/react';
-  import { useDisclosure } from '@chakra-ui/react';
-  import { Button, ButtonGroup } from '@chakra-ui/react';
-  import { HamburgerIcon } from '@chakra-ui/icons';
-  import { Input } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
+import { Button, ButtonGroup } from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import { Input } from '@chakra-ui/react';
+import Link from 'next/link';
+
 
   const LeftDrawer=()=>{
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -33,17 +35,28 @@ import {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Add Projects</DrawerHeader>
+            <DrawerHeader>Menu</DrawerHeader>
   
             <DrawerBody>
-              <Input placeholder='Project Name...' />
+              <ul className="list-group mt-3">
+  
+                  <Link href={`/dashboard`}>
+                    <button type="button" class="list-group-item list-group-item-action">Dashboard</button>
+                  </Link>
+                  <Link href={`/roles`}>
+                    <button type="button" class="list-group-item list-group-item-action">Roles</button>
+                  </Link>
+                  <Link href={`/users`}>
+                    <button type="button" class="list-group-item list-group-item-action">Users</button>
+                  </Link>
+                  
+              </ul>
             </DrawerBody>
   
             <DrawerFooter>
               <Button variant='outline' mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='blue'>Save</Button>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
