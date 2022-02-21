@@ -33,9 +33,26 @@ const UserlistPage = (props) => {
     const [roles,setRoles] = useState(props.roles)
     const [{user_details},dispatch] = useUserValue();
 
-    const handleDeleteUser =(id)=>{
-        console.log(id)
+    useEffect(() => {
+    },[users])
+
+    const handleDeleteUser = async (id)=>{
+        //console.log(id)
+        const res = await axios.post('/api/user/deleteById',{
+            id
+        })
+
+        if(res.status == 200){
+            const updatedUsers = users.filter(user => user._id != id)
+            setUsers(updatedUsers)
+            //console.log(updatedUsers);
+            toast('User deleted successfully');
+        }
+        else{
+            toast('User cannot be deleted');
+        }
     }
+
   return (
     <>
         <Navbar />
@@ -77,7 +94,9 @@ const UserlistPage = (props) => {
                                 <td>{data.name}</td>
                                 <td>{role.roleName}</td>
                                 <td className='text-center'>
-                                    <button className="btn btn-primary mx-1">Edit <i className="bi bi-pencil-square"></i></button>
+                                    <Link href={`/users/edit/${data._id}`}>
+                                        <a className="btn btn-primary">Edit <i className="bi bi-pencil-square"></i></a>
+                                    </Link>
                                     <button className="btn btn-danger mx-1" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
                                         handleDeleteUser(data._id)
                                     }}}>Delete <i className="bi bi-trash"></i></button>
