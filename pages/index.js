@@ -128,7 +128,7 @@ export default function Home(props) {
                       
                       <Box p='6'>
                         <Center >
-                          <Button leftIcon={<FaGoogle color="red" />} size='lg' colorScheme='blue' onClick={()=>signIn(providers.google.id)} p={6}><i className="bi bi-google text-danger"></i> Sign In with Google</Button>
+                          <Button leftIcon={<FaGoogle color="red" />} size='lg' colorScheme='blue' onClick={()=>signIn(providers.google.id)} p={6}> Sign In with Google</Button>
                         </Center>
                       </Box>                      
                 </Box>

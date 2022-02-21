@@ -9,12 +9,24 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String
   },
+  phone: {
+    type: String
+  },
   password: { 
+    type: String
+  },
+  imageUrl: { 
     type: String
   },
   userRole: { 
     type: String, 
     default: null 
+  },
+  previlage:{
+    type: String, 
+  },
+  globalAccess:{
+    type:Boolean
   }
 }, { timestamps: true })
 
