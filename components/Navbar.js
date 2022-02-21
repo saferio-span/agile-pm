@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react'
-// import Drawer from 'rc-drawer';
+React.useLayoutEffect = React.useEffect 
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useUserValue } from '../contexts/UserContext'
@@ -20,7 +20,6 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { signOut,useSession} from "next-auth/react"
 
 import RightDrawer from "../components/RightDrawer";
-import Content from '../components/Content';
 import LeftDrawer from '../components/LeftDrawer';
 import Search from '../components/Search';
 import { FiLogOut } from 'react-icons/fi';
@@ -64,8 +63,9 @@ const Navbar = () => {
     useEffect(()=>{
         fetchdata()
 
-        if(status!="authenticated")
+        if(status=="unauthenticated")
         {
+            console.log(`Inside Route`)
             router.push('/')
         }
     },[])
@@ -98,7 +98,7 @@ const Navbar = () => {
             
             <Spacer />
             <Box p='2'>
-              <RightDrawer />
+              {/* <RightDrawer /> */}
               <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                     Actions
@@ -110,10 +110,6 @@ const Navbar = () => {
             </Menu>
             </Box>
           </Flex>
-          
-          <Box>
-            <Content />
-          </Box>
         </div>
         
       )
