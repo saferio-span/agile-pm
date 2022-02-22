@@ -1,7 +1,6 @@
 import React,{useEffect, useState} from 'react'
 React.useLayoutEffect = React.useEffect 
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import { useUserValue } from '../contexts/UserContext'
 import { actionTypes } from "../contexts/userReducer"
 import axios from 'axios';
@@ -26,13 +25,17 @@ import { FiLogOut } from 'react-icons/fi';
 import { FaUserAlt } from 'react-icons/fa';
 import { AiFillHome } from 'react-icons/ai';
 import styles from '../styles/nav.module.css'
+import Router from 'next/router'
 
 const Navbar = () => {
     // const theme = useTheme();
     const [{user_details},dispatch] = useUserValue();
     const { data: session, status } = useSession()
-    const router = useRouter()
+    const [url,setUrl] = useState("")
+    // console.log(Router)
+    // const router = useRouter()
     // const [drawerOpen,setDrawerOpen] = useState(false)
+    console.log(url)
     const handleLogout = ()=>{
         localStorage.clear();
         
@@ -41,8 +44,9 @@ const Navbar = () => {
             type: actionTypes.SET_USER_DETAILS,
             data: null,
         })
-        signOut()
-        router.push('/')
+        signOut({ callbackUrl: url })
+        // Router.push('/')
+
     }
 
     const fetchdata = async ()=>{
@@ -63,11 +67,13 @@ const Navbar = () => {
     useEffect(()=>{
         fetchdata()
 
-        if(status=="unauthenticated")
-        {
-            console.log(`Inside Route`)
-            router.push('/')
-        }
+        // if(status=="unauthenticated")
+        // {
+        //     console.log(`Inside Route`)
+        //     Router.push('/')
+        // }
+        console.log(window.location)
+        setUrl(window.location.origin)
     },[])
 
     return (

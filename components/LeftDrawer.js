@@ -41,13 +41,13 @@ import Link from 'next/link';
               <ul className="list-group mt-3">
   
                   <Link href={`/dashboard`}>
-                    <button type="button" class="list-group-item list-group-item-action">Dashboard</button>
+                    <button type="button" className="list-group-item list-group-item-action">Dashboard</button>
                   </Link>
                   <Link href={`/roles`}>
-                    <button type="button" class="list-group-item list-group-item-action">Roles</button>
+                    <button type="button" className="list-group-item list-group-item-action">Roles</button>
                   </Link>
                   <Link href={`/users`}>
-                    <button type="button" class="list-group-item list-group-item-action">Users</button>
+                    <button type="button" className="list-group-item list-group-item-action">Users</button>
                   </Link>
                   
               </ul>
