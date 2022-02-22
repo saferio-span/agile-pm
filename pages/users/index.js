@@ -33,7 +33,7 @@ const UserlistPage = (props) => {
     const [roles,setRoles] = useState(props.roles)
     const [{user_details},dispatch] = useUserValue();
 
-    useEffect(() => {
+    useEffect(()=>{
     },[users])
 
     const handleDeleteUser = async (id)=>{

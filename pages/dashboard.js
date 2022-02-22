@@ -8,15 +8,7 @@ import { Text,Button,Grid,GridItem,Heading } from '@chakra-ui/react'
 const Dashboard = () => {
 
     const [{user_details},dispatch] = useUserValue();
-    const handleLogout = ()=>{
-        localStorage.clear();
-        dispatch({
-            type: actionTypes.SET_USER_DETAILS,
-            data: null,
-        })
-        Router.push('/')
-    }
-
+    
     return <>
         <Navbar />  
         <div className="container-fluid">
