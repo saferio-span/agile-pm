@@ -2,7 +2,7 @@ import React,{useState,useEffect} from "react";
 import axios from "axios"
 import { toast,ToastContainer } from "react-toastify"
 import Router from 'next/router'
-import { getSession,getProviders, signIn,useSession } from "next-auth/react"
+import { getSession,getProviders, signIn, signOut, useSession } from "next-auth/react"
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link"
 import Image from 'next/image'
@@ -13,6 +13,7 @@ import { actionTypes } from "../contexts/userReducer"
 import style from "../styles/login.module.css"
 import { Box,Flex,Center,Text,Button,Grid, GridItem ,Icon,Wrap, WrapItem  } from '@chakra-ui/react'
 import { FaGoogle } from 'react-icons/fa';
+
 
 export const getServerSideProps = async (context)=>{
     const { req,query } = context;
@@ -33,28 +34,72 @@ export const getServerSideProps = async (context)=>{
 export default function Home(props) {
   // const { data: session } = useSession()
 
+  const [agileUser,setAgileUser] =  useState(false)
+  const [showLogin,setShowLogin] = useState(true)
+  
   const providers = props.providers
   const [values,setValues] = useState({
     email:"",
     password:""
   })
   const { data: session, status } = useSession()
-  
+  console.log(session)
   const [loading,setLoading] = useState(false)
   const [{user_details},dispatch] = useUserValue();
 
+  const setUserDetails = async() => {
+    let localEmail = localStorage.getItem("loggedInEmail");
+
+    const res = await axios.post(`/api/user/findByEmail`,{
+      email: session.user.email??localEmail
+    })
+
+    const data = await res.data
+    console.log(data)
+    console.log("Fetched")
+    if(data.length != 0){
+      setAgileUser(true)
+      dispatch({
+        type: actionTypes.SET_USER_DETAILS, 
+        data: data[0]
+      })
+      Router.push('/dashboard')
+    }
+    else{
+      console.log('User Not Found');
+      setShowLogin(false)
+    }
+  }
+ 
   useEffect(()=>{
     console.log(status)
-    // if(session == null )
-    // {
-    //     signOut()
+   
+    if(status=="authenticated"){
+      localStorage.setItem("loggedInEmail", session.user.email);
+      setUserDetails()
+    }
+
+    // if(status=="authenticated" && agileUser==false){
+    //   Router.push('/unauthorisedUser')
+    // }
+
+    // if(status=="authenticated" && agileUser){
+    //   console.log("Go to dashboard")
+    //   
+    // }
+    // else{
+    //   Router.push('/unauthorisedUser');
     // }
     
-    if(status=="authenticated"){
-        Router.push('/dashboard')
-    }
+
   //eslint-disable-next-line
   },[])
+
+  const handleTryAgain = ()=>{
+    setShowLogin(true)
+    signOut()
+
+  }
 
   const handleValues = (e)=>{
     const { name, value } = e.target;
@@ -92,13 +137,32 @@ export default function Home(props) {
       }
     }
     setLoading(false)
-    
 
   }
+
+  const LoginComp = <>
+   
+                      
+                        <Center >
+                          <Button leftIcon={<FaGoogle color="red" />} size='lg' colorScheme='blue' onClick={()=>signIn(providers.google.id)} p={6}> Sign In with Google</Button>
+                        </Center>
+                   
+
+    </>
+
+  const UnauthorisedComp = <>
+                          <Center >
+                            <Text fontSize='3xl' color="black">Unauthorised User</Text>
+                        </Center>
+                        <Center >
+                            <button onClick={handleTryAgain} className="btn btn-danger">
+                                Try again!!
+                            </button>
+                        </Center>
+  </>
   return (
     <div className={style.loginBackground}>
       <main>
-        <ToastContainer />
         <Box width='100%' height='100%'>
           
           <Grid templateColumns='repeat(2, 1fr)' height='100%' gap={6} pt="10%">
@@ -127,40 +191,14 @@ export default function Home(props) {
                     </Box>
                       
                       <Box p='6'>
-                        <Center >
-                          <Button leftIcon={<FaGoogle color="red" />} size='lg' colorScheme='blue' onClick={()=>signIn(providers.google.id)} p={6}> Sign In with Google</Button>
-                        </Center>
+                        {showLogin && LoginComp }
+                        {!showLogin && UnauthorisedComp }
                       </Box>                      
                 </Box>
               </Center>
             </GridItem>
           </Grid>
         </Box>
-        
-        {/* <div className="container-fluid">
-          <ToastContainer />
-          <div className={`${style.loginCols} row`}>
-            <div className="col-md-6 d-flex justify-content-center">
-              <h1 className="text-warning align-self-center display-1">SPM TOOL</h1>
-            </div>
-            <div className="col-md-6 d-flex justify-content-center">
-                <div className={`${style.loginCard} card px-5 py-3 align-self-center`}>
-                  <div className={`${style.imageCard} card-header align-self-center`}>
-                    <Image
-                        src="/images/span.png"
-                        alt="Login Image"
-                        width={250}
-                        height={200}
-                        className={style.loginCardImage} />
-                  </div>
-                  <div className="card-body align-self-center">
-                      <button type="button" onClick={()=>signIn(providers.google.id)} className="btn btn-block btn-lg btn-primary px-5"><i className="bi bi-google text-danger"></i> Sign In with Google</button>
-                  </div>
-                </div>
-            </div>
-            
-          </div>
-        </div> */}
       </main>
     </div>    
   )

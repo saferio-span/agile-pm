@@ -28,11 +28,14 @@ import { AiFillHome } from 'react-icons/ai';
 import styles from '../styles/nav.module.css'
 
 const Navbar = () => {
+
+    const [url,setUrl] =  useState("")
     // const theme = useTheme();
     const [{user_details},dispatch] = useUserValue();
     const { data: session, status } = useSession()
     const router = useRouter()
     // const [drawerOpen,setDrawerOpen] = useState(false)
+    // console.log(`User Details from Nav`,user_details)
     const handleLogout = ()=>{
         localStorage.clear();
         
@@ -41,28 +44,33 @@ const Navbar = () => {
             type: actionTypes.SET_USER_DETAILS,
             data: null,
         })
-        signOut()
-        router.push('/')
+        signOut({ callbackUrl: url })
+        // router.push('/')
     }
+    const setUserDetails = async() => {
+        let localEmail = localStorage.getItem("loggedInEmail");
 
-    const fetchdata = async ()=>{
-        var id = localStorage.getItem('id')
-        const userRes = await axios.post(`/api/user/getById`,{
-            id
+        const res = await axios.post(`/api/user/findByEmail`,{
+            email: session?.user?.email??localEmail
         })
-        const details = userRes.data
-
-        console.log(details)
-
-        dispatch({
-            type: actionTypes.SET_USER_DETAILS,
-            data: details,
-        })
-    }
+    
+        const data = await res.data
+        //console.log(data)
+        console.log("Fetched")
+        if(data){
+          dispatch({
+            type: actionTypes.SET_USER_DETAILS, 
+            data: data[0]
+          })
+        }
+      }
 
     useEffect(()=>{
-        fetchdata()
-
+        if(user_details == undefined || user_details == null)
+        {
+            setUserDetails()
+        }
+        setUrl(window.location.origin)
         if(status=="unauthenticated")
         {
             console.log(`Inside Route`)

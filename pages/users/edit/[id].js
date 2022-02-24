@@ -181,7 +181,7 @@ const Edit = ({userData, roles}) => {
                         </div>
                         <div className='mt-2'>
                             <FormLabel htmlFor='email'>Mobile Number<span className='text-danger'>*</span></FormLabel>
-                            <Input id='mobileNumber' name="mobile" value={user.phone} type='number' maxLength="10" minLength="10" onChange={handleInputChange} />
+                            <Input id='mobileNumber' name="mobile" value={user.phone} type='text' maxLength="10" minLength="10" onChange={handleInputChange} />
                         </div>
 
                         <Text fontSize='2xl' className='mt-3'>Scope</Text>
