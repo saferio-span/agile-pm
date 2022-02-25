@@ -12,10 +12,10 @@ import absoluteUrl from 'next-absolute-url'
 export const getServerSideProps = async (context) => {
     const { req,query } = context;
     const { origin } = absoluteUrl(req)
-  
+    
     const projectRes = await axios.get(`${origin}/api/project/getAllProjects`)
     const projectsList = await projectRes.data
-    //console.log(projects)
+    
     return{
       props:{ 
         projectsList
@@ -26,7 +26,7 @@ export const getServerSideProps = async (context) => {
 
 const ProjectListPage = ({projectsList}) => {
 
-    console.log('Total Project List', projectsList);
+    //console.log('Total Project List', projectsList);
 
     const [project, setProject] = useState(projectsList)
 
@@ -83,7 +83,11 @@ const ProjectListPage = ({projectsList}) => {
                         return <>
                             <tr key={`{index}_row`}>
                                 <td>{index+1}</td>
-                                <td>{data.projectname}</td>
+                                <td>
+                                    <Link href={`/projects/assignProject/${data._id}`}>
+                                        <a>{data.projectname}</a>
+                                    </Link>
+                                </td>
                                 <td>{data.description}</td>
                                 <td className='text-center'>
                                     <Link href={`/projects/editProject/${data._id}`}>

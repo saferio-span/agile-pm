@@ -4,9 +4,9 @@ connectDB()
 
 export default async function handler(req,res)
 {
-    const {_id, projectname, description, updatedBy} = req.body
+    const {id, projectname, description, updatedBy} = req.body
     console.log(req.body);
-    await Project.findOneAndUpdate(_id, 
+    await Project.findByIdAndUpdate({_id:id}, 
         {
             projectname, 
             description, 

@@ -33,7 +33,7 @@ const EditProject = ({projectData}) => {
   //console.log('Edit Project', projectData)
 
   const [{user_details},dispatch] = useUserValue();
-  //console.log('user details', user_details)
+  console.log('user details', user_details)
 
   const [user, setUser] = useState(user_details)
 
@@ -85,19 +85,19 @@ const EditProject = ({projectData}) => {
         }
       }
      
-        const res = await axios.post('/api/project/editProjectById', values)
-        const output = await res.data
-        console.log('Output',output);
+      const res = await axios.post('/api/project/editProjectById', values)
+      const output = await res.data
+      console.log('Output',output);
 
-        if(res.status == 200)
-        {
-          toast("Project updated successfully")
-        }
+      if(res.status == 200)
+      {
+        toast("Project updated successfully")
+      }
 
-        if(res.status != 200)
-        {
-          toast.error("Project cannot be updated")
-        }
+      if(res.status != 200)
+      {
+        toast.error("Project cannot be updated")
+      }
     }
 
   }
