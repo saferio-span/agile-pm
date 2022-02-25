@@ -22,9 +22,6 @@ const UserSchema = new mongoose.Schema({
     type: String, 
     default: null 
   },
-  previlage:{
-    type: String, 
-  },
   globalAccess:{
     type:Boolean
   }

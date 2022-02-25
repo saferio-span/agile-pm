@@ -49,7 +49,9 @@ import Link from 'next/link';
                   <Link href={`/users`}>
                     <button type="button" className="list-group-item list-group-item-action">Users</button>
                   </Link>
-                  
+                  <Link href={`/projects`}>
+                    <button type="button" class="list-group-item list-group-item-action">Projects</button>
+                  </Link>
               </ul>
             </DrawerBody>
   

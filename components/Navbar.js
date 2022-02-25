@@ -28,6 +28,8 @@ import styles from '../styles/nav.module.css'
 import Router from 'next/router'
 
 const Navbar = () => {
+
+    // const [url,setUrl] =  useState("")
     // const theme = useTheme();
     const [{user_details},dispatch] = useUserValue();
     const { data: session, status } = useSession()
@@ -48,24 +50,38 @@ const Navbar = () => {
         // Router.push('/')
 
     }
+    const setUserDetails = async() => {
+        let localEmail = localStorage.getItem("loggedInEmail");
 
-    const fetchdata = async ()=>{
-        var id = localStorage.getItem('id')
-        const userRes = await axios.post(`/api/user/getById`,{
-            id
+        const res = await axios.post(`/api/user/findByEmail`,{
+            email: session?.user?.email??localEmail
         })
-        const details = userRes.data
-
-        console.log(details)
-
-        dispatch({
-            type: actionTypes.SET_USER_DETAILS,
-            data: details,
-        })
-    }
+    
+        const data = await res.data
+        //console.log(data)
+        console.log("Fetched")
+        if(data){
+          dispatch({
+            type: actionTypes.SET_USER_DETAILS, 
+            data: data[0]
+          })
+        }
+      }
 
     useEffect(()=>{
-        fetchdata()
+      // fetchdata()
+      
+        if(user_details == undefined || user_details == null)
+        {
+            setUserDetails()
+        }
+        setUrl(window.location.origin)
+        if(status=="unauthenticated")
+        {
+            console.log(`Inside Route`)
+            router.push('/')
+        }
+        
 
         // if(status=="unauthenticated")
         // {
@@ -113,7 +129,7 @@ const Navbar = () => {
                     <MenuItem>Profile<Spacer /><FaUserAlt color="#319795" /></MenuItem>
                     <MenuItem onClick={handleLogout}>Logout<Spacer /><FiLogOut color="#319795" /></MenuItem>
                 </MenuList>
-            </Menu>
+              </Menu>
             </Box>
           </Flex>
         </div>
