@@ -29,7 +29,7 @@ import Router from 'next/router'
 
 const Navbar = () => {
 
-    const [url,setUrl] =  useState("")
+    // const [url,setUrl] =  useState("")
     // const theme = useTheme();
     const [{user_details},dispatch] = useUserValue();
     const { data: session, status } = useSession()
@@ -69,7 +69,7 @@ const Navbar = () => {
       }
 
     useEffect(()=>{
-      fetchdata()
+      // fetchdata()
       
         if(user_details == undefined || user_details == null)
         {
