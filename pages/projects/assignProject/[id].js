@@ -30,6 +30,13 @@ export const getServerSideProps = async (context) => {
     })
     const projectData = project.data
 
+
+    const projectUsers = await axios.post(`${origin}/api/project/getProjectUsersById`, {
+        id
+    })
+    const assignedUsers = projectUsers.data
+
+
     const rolesRes = await axios.get(`${origin}/api/role/getAllRoles`)
     const roles = await rolesRes.data
 
@@ -40,14 +47,25 @@ export const getServerSideProps = async (context) => {
         props:{
             userData,
             roles,
-            projectData
+            projectData,
+            assignedUsers
         }
     }
 }
 
-const AssignProject = ({userData, roles, projectData}) => {
+const AssignProject = ({userData, roles, projectData, assignedUsers}) => {
   
-  //console.log('Project', projectData)
+    //console.log('Assigned user', assignedUsers)
+    let users = [];
+    if(assignedUsers.length != 0){
+        const getAssignedUsers = assignedUsers[0].users.map(user =>{
+            return user.id
+        })
+    
+        users = userData.filter((user) => getAssignedUsers.includes(user._id) )
+    }
+    
+    //console.log('Assigned user', users)
 
   return (
     <>
@@ -63,6 +81,12 @@ const AssignProject = ({userData, roles, projectData}) => {
 
         <div className='container'>
             <h2>{projectData.projectname}</h2>
+            <h2 className='mt-3'>Total Members assigned to {projectData.projectname}</h2>
+            <ul className='mt-3'>
+            {users.map((user) => {
+                return <li><p>{user.name}</p></li>
+            })}
+            </ul>
         </div>
     </>
   )
