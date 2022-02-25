@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const projectUserSchema = new Schema({  
+const projectUserSchema = new mongoose.Schema({  
     projectId: { 
         type: String
       },

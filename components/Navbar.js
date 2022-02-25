@@ -115,7 +115,7 @@ const Navbar = () => {
                     <MenuItem>Profile<Spacer /><FaUserAlt color="#319795" /></MenuItem>
                     <MenuItem onClick={handleLogout}>Logout<Spacer /><FiLogOut color="#319795" /></MenuItem>
                 </MenuList>
-            </Menu>
+              </Menu>
             </Box>
           </Flex>
         </div>

@@ -8,6 +8,17 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'
+import { 
+    Flex, 
+    Spacer , 
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Button
+} from '@chakra-ui/react';
+
+
 
 export const getServerSideProps = async (context)=>{
     const { req,query } = context;
@@ -95,11 +106,23 @@ const UserlistPage = (props) => {
                                 <td>{role.roleName}</td>
                                 <td className='text-center'>
                                     <Link href={`/users/edit/${data._id}`}>
-                                        <a className="btn btn-primary">Edit <i className="bi bi-pencil-square"></i></a>
+                                        <a className=""><i class="bi bi-pencil-fill"></i></a>
                                     </Link>
-                                    <button className="btn btn-danger mx-1" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
+                                    <Menu>
+                                        <MenuButton className="mx-2">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem>Active</MenuItem>
+                                            <MenuItem>Inactive</MenuItem>
+                                            <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
+                                                handleDeleteUser(data._id)
+                                            }}}>Delete <i className="bi bi-trash"></i></MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                    {/* <button className="mx-2" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
                                         handleDeleteUser(data._id)
-                                    }}}>Delete <i className="bi bi-trash"></i></button>
+                                    }}}><i class="bi bi-three-dots-vertical"></i></button> */}
                                 </td>
                             </tr>
                         </>

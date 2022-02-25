@@ -7,6 +7,15 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'
+import { 
+    Flex, 
+    Spacer , 
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Button
+} from '@chakra-ui/react';
 
 
 export const getServerSideProps = async (context) => {
@@ -60,9 +69,9 @@ const ProjectListPage = ({projectsList}) => {
         <ToastContainer />
         <div className='container-fluid'>
             <div className='row mt-3'>
-                <div className="col-2 offset-10 d-flex justify-content-end">
+                <div className="col-3 offset-9 d-flex justify-content-end">
                     <Link href="/projects/addProject">
-                        <a className="btn btn-primary">Add Project <i className="bi bi-folder-plus"></i></a>
+                        <a className="btn btn-primary">Create New Project <i className="bi bi-folder-plus"></i></a>
                     </Link>
                 </div>
             </div>
@@ -91,11 +100,21 @@ const ProjectListPage = ({projectsList}) => {
                                 <td>{data.description}</td>
                                 <td className='text-center'>
                                     <Link href={`/projects/editProject/${data._id}`}>
-                                        <a className="btn btn-primary">Edit <i className="bi bi-pencil-square"></i></a>
+                                        <a className=""><i class="bi bi-pencil-fill"></i></a>
                                     </Link>
-                                    <button className="btn btn-danger mx-1" onClick={()=>{if(window.confirm("Are you sure? You want to delete this project !")){
+                                    <Menu>
+                                        <MenuButton className="mx-2">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this project !")){
+                                                handleDeleteProject(data._id)
+                                            }}}>Delete <i className="bi bi-trash"></i></MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                    {/* <button className="btn btn-danger mx-1" onClick={()=>{if(window.confirm("Are you sure? You want to delete this project !")){
                                         handleDeleteProject(data._id)
-                                    }}}>Delete <i className="bi bi-trash"></i></button>
+                                    }}}>Delete <i className="bi bi-trash"></i></button> */}
                                 </td>
                             </tr>
                         </>
