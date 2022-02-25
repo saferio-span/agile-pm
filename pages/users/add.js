@@ -33,7 +33,7 @@ const Add = (props) => {
     const [userDetails,setUserDetails] = useState({
         email:"",
         name:"",
-        mobile:"",
+        phone:"",
         globalAccess : false,
         role:""
     })
@@ -69,7 +69,7 @@ const Add = (props) => {
                     setUserDetails({
                         email:"",
                         name:"",
-                        mobile:"",
+                        phone:"",
                         globalAccess : false,
                         role:""
                     })
@@ -155,7 +155,7 @@ const Add = (props) => {
                         </div>
                         <div className='mt-2'>
                             <FormLabel htmlFor='email'>Mobile Number<span className='text-danger'>*</span></FormLabel>
-                            <Input id='mobileNumber' name="mobile" type='number' maxLength="10" minLength="10" onChange={handleInputChange} />
+                            <Input id='mobileNumber' name="phone" type='number' maxLength="10" minLength="10" onChange={handleInputChange} />
                         </div>
 
                         <Text fontSize='2xl' className='mt-3'>Scope</Text>

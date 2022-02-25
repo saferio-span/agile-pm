@@ -10,7 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'
 import Select from 'react-select'
 import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box } from '@chakra-ui/react'
-//import { UserContextWrap } from '../../../contexts/UserContext';
 
 export const getServerSideProps = async (context)=>{
     const { req, query, params } = context;
@@ -40,6 +39,12 @@ const Edit = ({userData, roles}) => {
 
     const userEmail = userData.email;
     const [user, setUser] = useState(userData);
+<<<<<<< HEAD
+=======
+    const [name,setname] = useState("")
+    console.log(user)
+    const [loading,setLoading] = useState(false)
+>>>>>>> 086b8f4edb0b0a2edb007bf25e5150f7aaa85756
     const rolesOptions = roles.map(role=>{
         return { key: role.roleId, value: role.roleId.toString(), label: role.roleName }
     })
@@ -146,7 +151,11 @@ const Edit = ({userData, roles}) => {
                         </div>
                         <div className='mt-2'>
                             <FormLabel htmlFor='email'>Mobile Number<span className='text-danger'>*</span></FormLabel>
+<<<<<<< HEAD
                             <Input id='mobileNumber' name="mobile" value={user.phone} type='text' maxLength="10" minLength="10" onChange={handleInputChange} />
+=======
+                            <Input id='mobileNumber' name="phone" value={user.phone} type='text' maxLength="10" minLength="10" onChange={handleInputChange} />
+>>>>>>> 086b8f4edb0b0a2edb007bf25e5150f7aaa85756
                         </div>
 
                         <Text fontSize='2xl' className='mt-3'>Scope</Text>
