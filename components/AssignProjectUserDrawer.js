@@ -19,101 +19,115 @@ import { HStack } from '@chakra-ui/react'
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserValue } from '../contexts/UserContext'
-
-
-// const previlage = [
-//     { value: '', label: 'Select...' },
-//     { value: 'admin', label: 'Admin' },
-//     { value: 'developer', label: 'Developer' },
-//     { value: 'tester', label: 'Tester' },
-//   ];
-
-// const users = [
-//     { value: '', label: 'Select...' },
-//     { value: 'bharath', label: 'Bharath' },
-//     { value: 'johnsaferio', label: 'John Saferio' },
-//     { value: 'rexiya', label: 'Rexiya Britto' },
-//     { value: 'shakthi', label: 'Shakthi' },
-//     { value: 'govind', label: 'Govind' },
-//     { value: 'sruthi', label: 'Sruthi' },
-//     { value: 'ravi', label: 'Ravi' },
-//     { value: 'vinu', label: 'Vinu' },
-//     { value: 'anu', label: 'Anu' },
-//     { value: 'harish', label: 'Harish' },
-//     { value: 'mahesh', label: 'Mahesh' },
-//     { value: 'ram', label: 'Ram' },
-//     { value: 'naga', label: 'Naga' },
-//     { value: 'shyam', label: 'Shyam' },
-//     { value: 'prasad', label: 'Prasad' },
-//     { value: 'savio', label: 'Savio' },
-//     { value: 'robert', label: 'Robert' },
-//   ];
+import router from 'next/router';
 
 const animatedComponents = makeAnimated();
 
+const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,projectId}) => {
 
-const AssignProjectUserDrawer = (props) => {
-
-    //console.log('Props', props);
+    // console.log('User Props', assignedUsers);
     
+    const [childAssignedUsers, setAssignedUsers] = useState(assignedUsers);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+
     const [{user_details},dispatch] = useUserValue();
 
-    const rolesOptions = props.roles.map(role =>{
+    const rolesOptions = roles.map(role =>{
       return { key: role.roleId, value: role.roleId.toString(), label: role.roleName }
     })
 
-    const membersDefaultList = props.members.map(user =>{
+    const membersDefaultList = members.map(user =>{
       return { key: user._id, value: user._id, label: user.name }
     })
 
-    const [selectedRoleOption, setSelectedRoleOption] = useState(null);
-    //console.log('Role', selectedRoleOption);
+    const [Users, setUsers] = useState(membersDefaultList);
 
-    const [rolesBasedUsers, setRolesBasedUsers] = useState(membersDefaultList);
-    //console.log('Role Based Users', rolesBasedUsers);
-
-    const [selectedMembers, setSelectedMembers] = useState(null);
-    console.log('Members', selectedMembers);
-    
-
-    useEffect(() => {
-      if(selectedRoleOption != null){
-        const Users = props.members.filter((user) => user.userRole == selectedRoleOption.value )
+    const handleRoleOption = (e) => {
+      if(e == null){
+        setUsers(membersDefaultList)
+      }
+      else{
+        const Users = members.filter((user) => user.userRole == e.value )
         const List = Users.map(user =>{
           return { key: user._id, value: user._id, label: user.name }
         })
-        setRolesBasedUsers(List)
+        setUsers(List)
+      }
+    }
+    
+    const childMembers = childAssignedUsers.map(user =>{
+      return { key: user._id, value: user._id, label: user.name }
+    })
+
+    
+    useEffect(() => {
+      if(childAssignedUsers.length != 0){
+        const userData = []
+        childAssignedUsers.forEach((asssignedUser) => {
+          members.forEach(user =>{
+            if(user._id == asssignedUser._id){
+              userData.push({ key: user._id, value: user._id, label: user.name }) 
+            }
+            
+          })
+
+        })
+        
+        setSelectedUsers(userData)
+      }
+      setAssignedUsers(childAssignedUsers)
+    }, [assignedUsers])
+
+
+    const handleSelectMembers = (e) => {
+      if(e == null){
+        setSelectedUsers(null)
       }
       else{
-        setRolesBasedUsers(membersDefaultList)
+        setSelectedUsers(e)
+
+        const updatedUsers = []
+        e.forEach(selected=>{
+          members.forEach(user =>{
+            if(user._id == selected.value){
+              updatedUsers.push(user) 
+            }
+          })
+        })
+        setAssignedUsers(updatedUsers)
       }
-    }, [selectedRoleOption])
+    }
 
-
-    useEffect(() => {
-    }, [selectedMembers])
-    
 
     const handleAssign = async () => {
-        //e.preventDefault();
-        if(selectedMembers != null){
-          const arrayUsers = Object.values(selectedMembers);
-          const userIds = arrayUsers.map(user => {
+        // console.log('Selected memembers', selectedUsers)
+
+        let updatedIdList = [];
+        if(selectedUsers != null){
+          const userIds = selectedUsers.map(user => {
             return {
               id: user.value,
               addedBy: user_details.name}
             }
           )
-          
-          const res = await axios.post('/api/project/assignProject', {
-            projectId: props.projectId,
-            userIds
-          })
 
-          if(res.status == 200){
-            toast("Project assigned added successfully")
+            const res = await axios.post('/api/project/assignProject', {
+              projectId: projectId,
+              userIds
+            })
+
+            if(res.status == 200){
+              toast("Project assigned successfully")
+              userIds.map((user) => {
+                updatedIdList.push(user.id)
+              })
+              const upatedUsers = members.filter((user) => updatedIdList.includes(user._id));
+              updateHandler(upatedUsers);
+            }
+            else{
+              toast("Project cannot be assigned")
+            }
           }
-        }
         else{
           toast.error('Please select the members')
         }
@@ -144,8 +158,7 @@ const AssignProjectUserDrawer = (props) => {
                 <div className='mt-2'>
                     <FormLabel htmlFor='email'>Choose Role</FormLabel>
                     <Select
-                        defaultValue={selectedRoleOption}
-                        onChange={setSelectedRoleOption}
+                        onChange={handleRoleOption}
                         options={rolesOptions}
                         isClearable={true}
                     />
@@ -153,23 +166,25 @@ const AssignProjectUserDrawer = (props) => {
                 <div className='my-4'>
                     <FormLabel htmlFor='email'>Choose Members<span className='text-danger'>*</span></FormLabel>
                     <Select
+                        defaultValue={childMembers}
                         closeMenuOnSelect={false}
                         components={animatedComponents}
-                        onChange={setSelectedMembers}
+                        onChange={handleSelectMembers}
                         isMulti
-                        options={rolesBasedUsers}
+                        options={Users}
                     />
                 </div>
                 <div className='mx-4'>
                   <List spacing={3}>
-                    {selectedMembers && selectedMembers.map((data, index) =>{
+                    {childAssignedUsers && childAssignedUsers.map((data, index) =>{
+
                         return <ListItem>
                         <HStack spacing='20px'>
                           <Box w='50px' h='40px'>
-                            <Avatar name={data.label} size="50" round="25px" />
+                            <Avatar name={data.name} size="50" round="25px" />
                           </Box>
                           <Box w='200px' h='40px' className='mt-3'>
-                            {data.label}
+                            {data.name}
                           </Box>
                         </HStack>
                       </ListItem>

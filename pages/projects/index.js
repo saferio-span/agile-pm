@@ -7,6 +7,8 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'
+import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup,  InputLeftElement,FormHelperText,Heading,Text,Checkbox } from '@chakra-ui/react'
 import { 
     Flex, 
     Spacer , 
@@ -16,6 +18,7 @@ import {
     MenuItem,
     Button
 } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react'
 
 
 export const getServerSideProps = async (context) => {
@@ -46,7 +49,7 @@ const ProjectListPage = ({projectsList}) => {
     //console.log(user_details);
 
     const handleDeleteProject = async (id) => {
-        console.log(id)
+        //console.log(id)
 
         const deleteProject = await axios.post('/api/project/deleteProjectById',{
             id
@@ -54,7 +57,7 @@ const ProjectListPage = ({projectsList}) => {
 
         if(deleteProject.status == 200){
             const updatedProjectList = project.filter(projectData => projectData._id != id)
-            console.log('update',updatedProjectList)
+            // console.log('update',updatedProjectList)
             setProject(updatedProjectList)
             toast('Project deleted successfully');
         }
@@ -65,11 +68,21 @@ const ProjectListPage = ({projectsList}) => {
     
   return (
     <>
+        <ChakraProvider>
         <Navbar />
         <ToastContainer />
         <div className='container-fluid'>
             <div className='row mt-3'>
-                <div className="col-3 offset-9 d-flex justify-content-end">
+                <div className="col-3">
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents='none'
+                            children={<SearchIcon color='gray.300' />}
+                        />
+                        <Input type='tel' placeholder='Search Projects...' />
+                    </InputGroup>
+                </div>
+                <div className="col-3 offset-6 justify-content-end">
                     <Link href="/projects/addProject">
                         <a className="btn btn-primary">Create New Project <i className="bi bi-folder-plus"></i></a>
                     </Link>
@@ -122,6 +135,7 @@ const ProjectListPage = ({projectsList}) => {
                 </tbody>
             </table>
         </div>
+        </ChakraProvider>
     </>
   )
 }

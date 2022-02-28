@@ -7,6 +7,8 @@ import { actionTypes } from "../../contexts/userReducer"
 import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup,  InputLeftElement,FormHelperText,Heading,Text,Checkbox } from '@chakra-ui/react'
 import absoluteUrl from 'next-absolute-url'
 import ReactPaginate from "react-paginate"
 import Avatar from 'react-avatar';
@@ -152,6 +154,7 @@ const UserlistPage = (props) => {
         <Navbar />
         <ToastContainer />
         <div className='container-fluid'>
+
             <div className='row mt-2'>
                 <div className="col-3">
                 <div className="input-group mb-3">

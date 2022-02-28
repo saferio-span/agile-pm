@@ -55,7 +55,7 @@ export default function Home(props) {
     })
 
     const data = await res.data
-    console.log(data)
+    //console.log(data)
     console.log("Fetched")
     if(data.length != 0){
       setAgileUser(true)
