@@ -7,6 +7,8 @@ import { actionTypes } from "../../contexts/userReducer"
 import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup,  InputLeftElement,FormHelperText,Heading,Text,Checkbox } from '@chakra-ui/react'
 import absoluteUrl from 'next-absolute-url'
 import { 
     Flex, 
@@ -70,7 +72,16 @@ const UserlistPage = (props) => {
         <ToastContainer />
         <div className='container-fluid'>
             <div className='row mt-3'>
-                <div className="col-2 offset-10 d-flex justify-content-end">
+                <div className="col-3">
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents='none'
+                            children={<SearchIcon color='gray.300' />}
+                        />
+                        <Input type='tel' placeholder='Search Users...' />
+                    </InputGroup>
+                </div>
+                <div className="col-2 offset-7 d-flex justify-content-end">
                     <Link href="/users/add">
                         <a className="btn btn-primary">Add User <i className="bi bi-person-plus-fill"></i></a>
                     </Link>

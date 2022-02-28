@@ -25,7 +25,7 @@ import { FiLogOut } from 'react-icons/fi';
 import { FaUserAlt } from 'react-icons/fa';
 import { AiFillHome } from 'react-icons/ai';
 import styles from '../styles/nav.module.css'
-import Router from 'next/router'
+import router from 'next/router'
 
 const Navbar = () => {
 
