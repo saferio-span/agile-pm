@@ -1,0 +1,16 @@
+.customCard
+{
+  height: 120px;
+  background-color: white;
+  border-radius:5px ;
+  box-shadow: 5px 5px 20px #aaaaaa;
+  cursor: pointer;
+}
+
+.customCard:hover{
+  color: #319795;
+}
+
+.customIcon{
+  font-size: 40pt;
+}

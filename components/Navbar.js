@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useUserValue } from '../contexts/UserContext'
 import { actionTypes } from "../contexts/userReducer"
 import axios from 'axios';
-import { Box } from '@chakra-ui/react';
+import { Box,ChakraProvider } from '@chakra-ui/react';
 import { 
     Flex, 
     Spacer , 
@@ -93,46 +93,48 @@ const Navbar = () => {
     },[])
 
     return (
-        <div>
-          <Flex bg='#1A365D' p='2'>
-            <Box p='2'>
-              <LeftDrawer />
-            </Box>
+        <ChakraProvider>       
+            <div>
+                <Flex bg='#1A365D' p='2'>
+                    <Box p='2'>
+                    <LeftDrawer />
+                    </Box>
 
-            <Link href="/dashboard">
-                <a><AiFillHome className={styles.icons} color='#F6E05E' /></a>
-            </Link>
-            
+                    <Link href="/dashboard">
+                        <a><AiFillHome className={styles.icons} color='#F6E05E' /></a>
+                    </Link>
+                    
 
-            {/* <Box p='2'> */}
-              {/* <Text fontSize='2xl' color='white' as='i'>Agile Management</Text> */}
-              {/* <Search /> */}
-            {/* </Box> */}
-            <Spacer />
-            <Box bg='white'>
-                <Image
-                    src="/images/span.png"
-                    alt="Login Image"
-                    width={100}
-                    height={50}
-                />
-            </Box>
-            
-            <Spacer />
-            <Box p='2'>
-              {/* <RightDrawer /> */}
-              <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                    Actions
-                </MenuButton>
-                <MenuList>
-                    <MenuItem>Profile<Spacer /><FaUserAlt color="#319795" /></MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout<Spacer /><FiLogOut color="#319795" /></MenuItem>
-                </MenuList>
-              </Menu>
-            </Box>
-          </Flex>
-        </div>
+                    {/* <Box p='2'> */}
+                    {/* <Text fontSize='2xl' color='white' as='i'>Agile Management</Text> */}
+                    {/* <Search /> */}
+                    {/* </Box> */}
+                    <Spacer />
+                    <Box bg='white'>
+                        <Image
+                            src="/images/span.png"
+                            alt="Login Image"
+                            width={100}
+                            height={50}
+                        />
+                    </Box>
+                    
+                    <Spacer />
+                    <Box p='2'>
+                    {/* <RightDrawer /> */}
+                    <Menu>
+                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                            Actions
+                        </MenuButton>
+                        <MenuList>
+                            <MenuItem>Profile<Spacer /><FaUserAlt color="#319795" /></MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout<Spacer /><FiLogOut color="#319795" /></MenuItem>
+                        </MenuList>
+                    </Menu>
+                    </Box>
+                </Flex>
+            </div>
+        </ChakraProvider>
         
       )
 };
