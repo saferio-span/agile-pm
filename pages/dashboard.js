@@ -4,11 +4,23 @@ import { useUserValue } from '../contexts/UserContext'
 import { actionTypes } from "../contexts/userReducer"
 import Navbar from '../components/Navbar';
 import { Text,Button,Grid,GridItem,Heading } from '@chakra-ui/react'
+import { useSession } from "next-auth/react"
 
 const Dashboard = () => {
 
     const [{user_details},dispatch] = useUserValue();
+    const { data: session, status } = useSession()
+    console.log(session);
     
+    const handleLogout = ()=>{
+        localStorage.clear();
+        dispatch({
+            type: actionTypes.SET_USER_DETAILS,
+            data: null,
+        })
+        Router.push('/')
+    }
+
     return <>
         <Navbar />  
         <div className="container-fluid">

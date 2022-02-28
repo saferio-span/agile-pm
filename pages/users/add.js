@@ -26,7 +26,7 @@ export const getServerSideProps = async (context)=>{
 
 const Add = (props) => {
 
-    const [loading,setLoading] = useState(false)
+    // const [loading,setLoading] = useState(false)
     const rolesOptions = props.roles.map(role=>{
         return { key: role.roleId, value: role.roleId, label: role.roleName }
     })
@@ -35,36 +35,17 @@ const Add = (props) => {
         name:"",
         phone:"",
         globalAccess : false,
-        role:"",
-        previlage:""
+        role:""
     })
-    const previlageOptions = [
-        {
-            key: 1, 
-            value: "User", 
-            label: "User"
-        },
-        {
-            key: 2, 
-            value: "Supervisor", 
-            label: "Supervisor"
-        },
-        {
-            key: 3, 
-            value: "Admin", 
-            label: "Admin"
-        },
-    ]
+
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
-        setLoading(true)
         console.log(userDetails)
         const hasEmptyField = Object.values(userDetails).some((element)=>element==='')
         if(hasEmptyField) 
         {
             toast.error("Please fill in all fields which are mandatory(*)")
-            setLoading(false)
             return false
         }
         else
@@ -76,7 +57,6 @@ const Add = (props) => {
             if(availablity.data.length > 0)
             {
                 toast.error("Email has been used already. Please try again using another email")
-                setLoading(false)
                 return false
             }
             else
@@ -91,18 +71,14 @@ const Add = (props) => {
                         name:"",
                         phone:"",
                         globalAccess : false,
-                        role:"",
-                        previlage:""
+                        role:""
                     })
-                    setLoading(false)
                     document.getElementById("createUserForm").reset();
-                    // router.push('/merchant/login')
                 }
     
                 if(res.status != 200)
                 {
                     toast.error("User cannot be added")
-                    setLoading(false)
                 }
             }
         }
@@ -116,19 +92,9 @@ const Add = (props) => {
         else{
             setUserDetails({ ...userDetails, role: "" });
         }
-        console.log(userDetails)
+        // console.log(userDetails)
     }
 
-    const handlePrevilageSelectChange = (e)=>{
-        if(e !== null)
-        {
-            setUserDetails({ ...userDetails, previlage: e.value });
-        }
-        else
-        {
-            setUserDetails({ ...userDetails, previlage: "" });
-        }
-    }
 
     const handleInputChange = (e)=>{
         const { name, value } = e.target;
@@ -141,7 +107,7 @@ const Add = (props) => {
         {
             setUserDetails({ ...userDetails, [name]: value });
         }
-        console.log(userDetails)
+        //console.log(userDetails)
     }
 
     const resetForm = ()=>{
@@ -152,8 +118,7 @@ const Add = (props) => {
             name:"",
             mobile:"",
             globalAccess : true,
-            role:"",
-            previlage:""
+            role:""
         })
     }
 
@@ -211,20 +176,6 @@ const Add = (props) => {
                                 options={rolesOptions}
                                 onChange={handleRoleSelectChange}
                                 inputProps={{ id: 'role' }}
-                            />
-                        </div>
-                        <div className='mt-2'>
-                            <FormLabel htmlFor='email'>Choose Previlage<span className='text-danger'>*</span></FormLabel>
-                            <Select
-                                className="basic-single"
-                                classNamePrefix="select"
-                                defaultValue="0"
-                                isSearchable="true"
-                                isClearable="true"
-                                name="previlage"
-                                options={previlageOptions}
-                                onChange={handlePrevilageSelectChange}
-                                inputProps={{ id: 'previlage' }}
                             />
                         </div>
                         <div className='my-3 d-flex justify-content-end'>

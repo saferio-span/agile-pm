@@ -33,45 +33,30 @@ export const getServerSideProps = async (context)=>{
 }
 
 const Edit = ({userData, roles}) => {
-    console.log(userData);
-    console.log(roles);
 
-    const userEmail = userData.email
+    // console.log(userData);
+    // console.log(roles);
+
+    const userEmail = userData.email;
     const [user, setUser] = useState(userData);
+<<<<<<< HEAD
+=======
     const [name,setname] = useState("")
     console.log(user)
     const [loading,setLoading] = useState(false)
+>>>>>>> 086b8f4edb0b0a2edb007bf25e5150f7aaa85756
     const rolesOptions = roles.map(role=>{
         return { key: role.roleId, value: role.roleId.toString(), label: role.roleName }
     })
     
-    const previlageOptions = [
-        {
-            key: 1, 
-            value: "User", 
-            label: "User"
-        },
-        {
-            key: 2, 
-            value: "Supervisor", 
-            label: "Supervisor"
-        },
-        {
-            key: 3, 
-            value: "Admin", 
-            label: "Admin"
-        },
-    ]
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
-        setLoading(true)
-        console.log(user)
+        console.log('Submit', user)
         const hasEmptyField = Object.values(user).some((element)=>element==='')
         if(hasEmptyField) 
         {
             toast.error("Please fill in all fields which are mandatory(*)")
-            setLoading(false)
             return false
         }
         else
@@ -89,45 +74,32 @@ const Edit = ({userData, roles}) => {
                 }
             }
             
-                const res = await axios.post('/api/user/editById',user)
-                if(res.status == 200)
-                {
-                    toast("User Updated successfully")
-                    setLoading(false)
-                    // router.push('/merchant/login')
-                }
-    
-                if(res.status != 200)
-                {
-                    toast.error("User cannot be updated")
-                    setLoading(false)
-                }
+            const res = await axios.post('/api/user/editById',user)
+            if(res.status == 200)
+            {
+                toast("User Updated successfully")
+            }
+
+            if(res.status != 200)
+            {
+                toast.error("User cannot be updated")
+            }
             
         }
     }
 
     const handleRoleSelectChange = (e)=>{
-        console.log(e.value);
+        // console.log(e.value);
         if(e !== null)
         {
-            setUser({ ...user, role: e.value });
+            setUser({ ...user, userRole: e.value });
         }
         else{
-            setUser({ ...user, role: "" });
+            setUser({ ...user, userRole: "" });
         }
-        //console.log(user)
+        // console.log(user)
     }
 
-    const handlePrevilageSelectChange = (e)=>{
-        if(e !== null)
-        {
-            setUser({ ...user, previlage: e.value });
-        }
-        else
-        {
-            setUser({ ...user, previlage: "" });
-        }
-    }
 
     const handleInputChange = (e)=>{
         const { name, value } = e.target;
@@ -140,7 +112,7 @@ const Edit = ({userData, roles}) => {
         {
             setUser({ ...user, [name]: value });
         }
-        console.log(user)
+        // console.log(user)
     }
 
     const resetForm = ()=>{
@@ -151,12 +123,9 @@ const Edit = ({userData, roles}) => {
             name:"",
             mobile:"",
             globalAccess : true,
-            role:"",
-            previlage:""
+            role:""
         })
     }
-
-    //const checked = user.globalAccess ? `defaultChecked`  : ''
 
   return (
     <>
@@ -164,7 +133,7 @@ const Edit = ({userData, roles}) => {
         <ToastContainer />
         <div>
             <Heading as='h3' size='md' className='mt-3 mx-3'>
-                <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Add User
+                <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Edit User
             </Heading>  
             <Box className='mt-3 mx-5'>
 
@@ -182,14 +151,16 @@ const Edit = ({userData, roles}) => {
                         </div>
                         <div className='mt-2'>
                             <FormLabel htmlFor='email'>Mobile Number<span className='text-danger'>*</span></FormLabel>
+<<<<<<< HEAD
+                            <Input id='mobileNumber' name="mobile" value={user.phone} type='text' maxLength="10" minLength="10" onChange={handleInputChange} />
+=======
                             <Input id='mobileNumber' name="phone" value={user.phone} type='text' maxLength="10" minLength="10" onChange={handleInputChange} />
+>>>>>>> 086b8f4edb0b0a2edb007bf25e5150f7aaa85756
                         </div>
 
                         <Text fontSize='2xl' className='mt-3'>Scope</Text>
 
                         <div className='mt-2'>
-                            {/* <Checkbox name='globalAccess' id="globalAccess" checked onChange={handleInputChange}>Global Access</Checkbox> */}
-
                             <div className="form-check">
                                 <input className="form-check-input"type="checkbox" defaultChecked={user.globalAccess} name='globalAccess' id="globalAccess" onChange={handleInputChange} />
                                 <label className="form-check-label" htmlFor="flexCheckDefault">
@@ -213,24 +184,6 @@ const Edit = ({userData, roles}) => {
                                 value = {
                                     rolesOptions.filter(option =>
                                     option.value === user.userRole)
-                                }
-                            />
-                        </div>
-                        <div className='mt-2'>
-                            <FormLabel htmlFor='email'>Choose Previlage<span className='text-danger'>*</span></FormLabel>
-                            <Select
-                                className="basic-single"
-                                classNamePrefix="select"
-                                defaultValue="0"
-                                isSearchable="true"
-                                isClearable="true"
-                                name="previlage"
-                                options={previlageOptions}
-                                onChange={handlePrevilageSelectChange}
-                                inputProps={{ id: 'previlage' }}
-                                value = {
-                                    previlageOptions.filter(option =>
-                                    option.value === user.previlage)
                                 }
                             />
                         </div>

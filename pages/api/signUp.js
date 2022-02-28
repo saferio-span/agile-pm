@@ -11,7 +11,7 @@ export default async function handler(req,res)
     user.name = name
     user.email = email
     user.phone = phone
-    user.previlage = previlage
+    // user.previlage = previlage
     // user.password = await bcrypt.hash(password, 10)
     user.userRole = role
     user.globalAccess = globalAccess
