@@ -7,8 +7,8 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box } from '@chakra-ui/react'
-
-
+import { ChakraProvider } from '@chakra-ui/react'
+import { Textarea } from '@chakra-ui/react'
 
 const AddProject = () => {
 
@@ -88,6 +88,7 @@ const AddProject = () => {
 
   return (
     <>
+      <ChakraProvider>
       <Navbar />
       <ToastContainer />
         <div>
@@ -113,7 +114,8 @@ const AddProject = () => {
                 </div>
                 <div className='mt-2'>
                     <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>
-                    <Input id='description' name="description" type='text' onChange={handleInputChange} />
+                    {/* <Input id='description' name="description" type='text' onChange={handleInputChange} /> */}
+                    <Textarea name="description" onChange={handleInputChange} />
                 </div>
                 <div className='my-3 d-flex justify-content-end'>
                     <button type='submit' className="btn btn-primary mx-2">Create Project</button>
@@ -123,6 +125,7 @@ const AddProject = () => {
           </form>
         </Box>    
       </div>
+      </ChakraProvider>
     </>
   )
 }

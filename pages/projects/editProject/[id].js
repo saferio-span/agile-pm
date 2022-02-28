@@ -8,6 +8,8 @@ import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url';
 import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
+import { Textarea } from '@chakra-ui/react'
 
 export const getServerSideProps = async (context) => {
     const {req,res,params} = context
@@ -113,6 +115,7 @@ const EditProject = ({projectData}) => {
 
   return (
     <>
+      <ChakraProvider>
       <Navbar />
       <ToastContainer />
         <div>
@@ -138,7 +141,9 @@ const EditProject = ({projectData}) => {
                 </div>
                 <div className='mt-2'>
                     <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>
-                    <Input id='description' value={values.description} name="description" type='text' onChange={handleInputChange} />
+                    {/* <Input id='description' value={values.description} name="description" type='text' onChange={handleInputChange} /> */}
+                    <Textarea name="description" value={values.description} onChange={handleInputChange}  placeholder='Project Description'
+                    size='sm'/>
                 </div>
                 <div className='my-3 d-flex justify-content-end'>
                     <button type='submit' className="btn btn-primary mx-2">Update Project</button>
@@ -148,6 +153,7 @@ const EditProject = ({projectData}) => {
           </form>
         </Box>    
       </div>
+      </ChakraProvider>
     </>
   )
 }
