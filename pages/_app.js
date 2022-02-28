@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react"
 import Script from 'next/script'
 import Router from "next/router"
 import NProgress from "nprogress"
-import { ChakraProvider } from '@chakra-ui/react'
+// import { ChakraProvider } from '@chakra-ui/react'
 // import "../styles/login.css"
 
 function MyApp({ Component, pageProps}) {
@@ -28,9 +28,9 @@ function MyApp({ Component, pageProps}) {
           <link href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet" />
         </Head>
         <div>
-          <ChakraProvider>
+          {/* <ChakraProvider> */}
             <Component {...pageProps} />
-          </ChakraProvider>
+          {/* </ChakraProvider> */}
         </div>
         <>
           <Script  src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossOrigin="anonymous"></Script>
