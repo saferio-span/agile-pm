@@ -11,7 +11,7 @@ import { useUserValue } from '../contexts/UserContext'
 import { actionTypes } from "../contexts/userReducer"
 // import "bootstrap-icons/font/bootstrap-icons.css";
 import style from "../styles/login.module.css"
-import { Box,Flex,Center,Text,Button,Grid, GridItem ,Icon,Wrap, WrapItem  } from '@chakra-ui/react'
+import { Box,Flex,Center,Text,Button,Grid, GridItem ,Icon,Wrap, WrapItem,ChakraProvider  } from '@chakra-ui/react'
 import { FaGoogle } from 'react-icons/fa';
 
 
@@ -161,45 +161,47 @@ export default function Home(props) {
                         </Center>
   </>
   return (
-    <div className={style.loginBackground}>
-      <main>
-        <Box width='100%' height='100%'>
-          
-          <Grid templateColumns='repeat(2, 1fr)' height='100%' gap={6} pt="10%">
-            <GridItem  > 
-              <Center pt="10%">
-                <Text fontSize='6xl' color="#F6E05E">SPM TOOL</Text> 
-              </Center>
-            </GridItem>
-            <GridItem>
-              <Center >
-                <Box 
-                  w="80%"
-                  h="100%"
-                  bg='white' 
-                  borderWidth='1px' 
-                  borderRadius='lg' >
-                    <Box p='6'>
-                      <Center >
-                        <Image
-                          src="/images/span.png"
-                          alt="Login Image"
-                          width={300}
-                          height={200}
-                          className={style.loginCardImage} />
-                      </Center>
-                    </Box>
-                      
+    <ChakraProvider>
+      <div className={style.loginBackground}>
+        <main>
+          <Box width='100%' height='100%'>
+            
+            <Grid templateColumns='repeat(2, 1fr)' height='100%' gap={6} pt="10%">
+              <GridItem  > 
+                <Center pt="10%">
+                  <Text fontSize='6xl' color="#F6E05E">SPM TOOL</Text> 
+                </Center>
+              </GridItem>
+              <GridItem>
+                <Center >
+                  <Box 
+                    w="80%"
+                    h="100%"
+                    bg='white' 
+                    borderWidth='1px' 
+                    borderRadius='lg' >
                       <Box p='6'>
-                        {showLogin && LoginComp }
-                        {!showLogin && UnauthorisedComp }
-                      </Box>                      
-                </Box>
-              </Center>
-            </GridItem>
-          </Grid>
-        </Box>
-      </main>
-    </div>    
+                        <Center >
+                          <Image
+                            src="/images/span.png"
+                            alt="Login Image"
+                            width={300}
+                            height={200}
+                            className={style.loginCardImage} />
+                        </Center>
+                      </Box>
+                        
+                        <Box p='6'>
+                          {showLogin && LoginComp }
+                          {!showLogin && UnauthorisedComp }
+                        </Box>                      
+                  </Box>
+                </Center>
+              </GridItem>
+            </Grid>
+          </Box>
+        </main>
+      </div>    
+    </ChakraProvider>
   )
 }
