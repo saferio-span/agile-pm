@@ -96,7 +96,7 @@ const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,proj
     }
 
     const handleAssign = async () => {
-        let updatedIdList = [];
+        let userIds = [];
         if(selectedUsers != null){
           const userIds = selectedUsers.map(user => {
             return {
