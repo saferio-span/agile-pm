@@ -1,5 +1,5 @@
-import connectDB from "../../../config/connectDB"
-import User from "../../../models/userModel"
+import connectDB from "../../../../config/connectDB"
+import User from "../../../../models/userModel"
 connectDB()
 
 export default async function handler (req,res){

@@ -116,8 +116,10 @@ const UserlistPage = (props) => {
 
         setShowGlobalButtons(showGlobalActive)
         setCheckAllState(checkAllState)
+
+        console.log(selectedUsers)
         
-    },[users,pageNum,searchTerm,checkValues])
+    },[users,pageNum,searchTerm,checkValues,selectedUsers])
 
     const handleDeleteUser = async (id)=>{
         //console.log(id)
@@ -150,11 +152,14 @@ const UserlistPage = (props) => {
         if(e.target.checked)
         {
             const ckeckValue = {}
+            const userIds = []
 
             users.forEach(user=>{
                 ckeckValue[`${user._id}_checked`] = true
+                userIds.push(user._id)
             })
             setCheckValues(ckeckValue)
+            setSelectedUsers(userIds)
         }
         else
         {
@@ -164,16 +169,27 @@ const UserlistPage = (props) => {
                 ckeckValue[`${user._id}_checked`] = false
             })
             setCheckValues(ckeckValue)
+            setSelectedUsers([])
         }
+
+        console.log(selectedUsers)
     }
 
-    const handleCheckChange = (e)=>{
+    const handleCheckChange = async(e)=>{
+        console.log(e.target.value)
         if(e.target.checked)
         {
             setCheckValues({...checkValues,[`${e.target.value}_checked`]:true})
-            const userDetails =  selectedUsers.find(user=>user.id==e.target.value)
-
-            if(userDetails.length==0)
+            const userDetails =  selectedUsers.find(id=>id==e.target.value)
+            console.log(userDetails)
+            if(userDetails != undefined)
+            {
+                if(userDetails.length==0 )
+                {
+                    setSelectedUsers([...selectedUsers,e.target.value])
+                }
+            }
+            else
             {
                 setSelectedUsers([...selectedUsers,e.target.value])
             }
@@ -181,32 +197,112 @@ const UserlistPage = (props) => {
         else
         {
             setCheckValues({...checkValues,[`${e.target.value}_checked`]:false})
+            const userDetails =  selectedUsers.filter(id=>id!=e.target.value)
+            setSelectedUsers(userDetails)
         }
     }
 
-    const handleSelectedUsersState = (e)=>{
+    const handleSelectedUsersState = async(e)=>{
+
         console.log(e.target.checked)
-    }
+        let isActive ;
+        if(e.target.checked)
+        {
+            isActive = true
+        }
+        else
+        {
+            isActive = false
+        }
 
-    const handleActiveState = (id,state)=>{
-        const updatedUsers = users.map(user=>{
-            if(id==user._id)
-            {
-                return{
-                    ...user,
-                    isActive:state
-                }
-            }
-            else
-            {
-                return user
-            }
+        const res = await axios.post("/api/user/states/multipleUsers",{
+            ids:selectedUsers,
+            isActive
         })
-        setUsers(updatedUsers)
+
+        if(res.status == 202)
+        {
+            toast(`Users state changed successfully`)
+            const getFilteredUser = users.map(user=>{
+                if(selectedUsers.includes(user._id))
+                {
+                    return {
+                        ...user,
+                        isActive
+                    }
+                }
+                else
+                {
+                    return user
+                }
+            })
+            setUsers(getFilteredUser)
+        }
+        else
+        {
+            toast.error("User state cannot be changed")
+        }
     }
 
-    
+    const handleActiveState = async(id,state)=>{
 
+        const res = await axios.post("/api/user/states/individualUser",{
+            _id:id,
+            isActive:state
+        })
+
+        if(res.status == 202)
+        {
+            toast(`User state changed successfully`)
+            const updatedUsers = users.map(user=>{
+                if(id==user._id)
+                {
+                    return{
+                        ...user,
+                        isActive:state
+                    }
+                }
+                else
+                {
+                    return user
+                }
+            })
+            setUsers(updatedUsers)
+        }
+        else
+        {
+            toast.error("User state cannot be changed")
+        }
+        
+    }
+
+    const handleDeleteMultiple = async()=>{
+
+        const res = await axios.post("/api/user/delete/deleteMultipleUsers",{
+            ids:selectedUsers
+        })
+
+        if(res.status == 200)
+        {
+            toast(`User deleted successfully`)
+            const getFilteredUser = users.filter(user=>{
+                if(!selectedUsers.includes(user._id))
+                {
+                    return user
+                }
+            })
+
+            console.log(getFilteredUser)
+            setUsers(getFilteredUser)
+            setSelectedUsers([])
+        }
+        else
+        {
+            toast.error(`User cannot be deleted`)
+        }
+        // console.log("Delete clicked")
+        // console.log(selectedUsers)
+    }
 
   return (
     <>
@@ -230,7 +326,7 @@ const UserlistPage = (props) => {
                     
                 </div>
                 <div className="col-3 text-end">
-                    { showGlobalButtons && <button className="btn btn-outline-danger">Dlelete <i className="bi bi-trash"></i></button> }
+                    { showGlobalButtons && <button className="btn btn-outline-danger" onClick={handleDeleteMultiple} >Delete <i className="bi bi-trash"></i></button> }
                 </div>
                 <div className="col-3 text-end">
                     <Link href="/users/add">

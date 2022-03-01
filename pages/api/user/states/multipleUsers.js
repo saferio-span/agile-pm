@@ -1,5 +1,5 @@
-import connectDB from "../../../config/connectDB";
-import User from "../../../models/userModel"
+import connectDB from "../../../../config/connectDB";
+import User from "../../../../models/userModel"
 connectDB()
 
 export default async function handler(req,res){
@@ -7,6 +7,8 @@ export default async function handler(req,res){
 try{
     const data = await User.updateMany({'_id' : {'$in':ids}},{isActive})
     if(data === null){
+        console.log(data)
+        console.log('User not found')
         res.status(404).send('User not found');
     }else{
         res.status(202).send('Successfully Updated')
