@@ -26,9 +26,22 @@ const animatedComponents = makeAnimated();
 const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,projectId}) => {
 
     // console.log('User Props', assignedUsers);
-    
-    const [childAssignedUsers, setAssignedUsers] = useState(assignedUsers);
-    const [selectedUsers, setSelectedUsers] = useState([]);
+  
+    let childAssignedUsers = assignedUsers
+
+    let selectedUsers = []
+
+    if(childAssignedUsers.length != 0){
+      const userData = []
+      childAssignedUsers.forEach((asssignedUser) => {
+        members.forEach(user =>{
+          if(user._id == asssignedUser._id){
+            selectedUsers.push({ key: user._id, value: user._id, label: user.name })
+          }
+        })
+      })
+      // selectedUsers=userData
+    }
 
     const [{user_details},dispatch] = useUserValue();
 
@@ -40,18 +53,22 @@ const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,proj
       return { key: user._id, value: user._id, label: user.name }
     })
 
-    const [Users, setUsers] = useState(membersDefaultList);
+    //const [Users, setUsers] = useState(membersDefaultList);
+    let users = membersDefaultList
+    
 
     const handleRoleOption = (e) => {
       if(e == null){
-        setUsers(membersDefaultList)
+        // setUsers(membersDefaultList)
+        users=membersDefaultList
       }
       else{
         const Users = members.filter((user) => user.userRole == e.value )
-        const List = Users.map(user =>{
+        const list = Users.map(user =>{
           return { key: user._id, value: user._id, label: user.name }
         })
-        setUsers(List)
+        //setUsers(list)
+        users=list
       }
     }
     
@@ -59,49 +76,26 @@ const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,proj
       return { key: user._id, value: user._id, label: user.name }
     })
 
-    
-    useEffect(() => {
-      if(childAssignedUsers.length != 0){
-        const userData = []
-        childAssignedUsers.forEach((asssignedUser) => {
-          members.forEach(user =>{
-            if(user._id == asssignedUser._id){
-              userData.push({ key: user._id, value: user._id, label: user.name }) 
-            }
-            
-          })
-
-        })
-        
-        setSelectedUsers(userData)
-      }
-      setAssignedUsers(childAssignedUsers)
-    }, [assignedUsers])
-
 
     const handleSelectMembers = (e) => {
       if(e == null){
-        setSelectedUsers(null)
+        selectedUsers=[]
       }
       else{
-        setSelectedUsers(e)
-
+        selectedUsers = e
         const updatedUsers = []
         e.forEach(selected=>{
           members.forEach(user =>{
             if(user._id == selected.value){
-              updatedUsers.push(user) 
+              updatedUsers.push(user)
             }
           })
         })
-        setAssignedUsers(updatedUsers)
+        childAssignedUsers = updatedUsers
       }
     }
 
-
     const handleAssign = async () => {
-        // console.log('Selected memembers', selectedUsers)
-
         let updatedIdList = [];
         if(selectedUsers != null){
           const userIds = selectedUsers.map(user => {
@@ -171,7 +165,7 @@ const AssignProjectUserDrawer = ({assignedUsers,roles,members,updateHandler,proj
                         components={animatedComponents}
                         onChange={handleSelectMembers}
                         isMulti
-                        options={Users}
+                        options={users}
                     />
                 </div>
                 <div className='mx-4'>
