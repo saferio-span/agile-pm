@@ -34,7 +34,7 @@ export default async function handler(req,res)
                 res.status(401).send('Failed');
             }
             else{
-                console.log('Successfully deleted')
+                //console.log('Successfully deleted')
                 res.status(200).send('Successfully deleted')
             }
         }).clone().catch(function(err){ console.log(err)})
