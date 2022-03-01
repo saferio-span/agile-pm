@@ -15,6 +15,7 @@ export default async function handler(req,res)
     // user.password = await bcrypt.hash(password, 10)
     user.userRole = role
     user.globalAccess = globalAccess
+    user.isActive = true
 
     console.log(user);
 

@@ -24,6 +24,10 @@ const UserSchema = new mongoose.Schema({
   },
   globalAccess:{
     type:Boolean
+  },
+  isActive:{
+    type:Boolean,
+    default:true
   }
 }, { timestamps: true })
 
