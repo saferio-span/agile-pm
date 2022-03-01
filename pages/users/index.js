@@ -52,13 +52,26 @@ const UserlistPage = (props) => {
     const [pageCount,setPageCount] = useState(Math.ceil(users.length / 10))
     const [searchTerm,setSearchTerm] = useState("")
 
-    const [filteretdUser,setFilteredUser] = useState()
-    const [checkAll,setCheckAll] = useState(false)
-    const [selectedUsers,setSelectedUsers] = useState([])
+    const [filteredUser,setFilteredUser] = useState()
+    // const [selectedUsers,setSelectedUsers] = useState([])
+
+    const initialCheckValue = {}
+    const stateSwitch = {}
+
+    users.forEach(user=>{
+        initialCheckValue[`${user._id}_checked`] = false
+        stateSwitch[`${user._id}_switch`] = false
+    })
+
+    const [checkValues,setCheckValues] = useState(initialCheckValue)
+
+    console.log(checkValues)
+
+    const [showGlobalButtons,setShowGlobalButtons] = useState(false)
+    const [checkAllState,setCheckAllState] = useState(false)
 
     useEffect(()=>{
-        setFilteredUser([])
-        
+        setFilteredUser([])        
 
         if(searchTerm != "")
         {
@@ -93,8 +106,17 @@ const UserlistPage = (props) => {
                 setPageCount(Math.ceil(users.length / 10))
             }
         }
+
+        const showGlobalActive = users.some((user)=>checkValues[`${user._id}_checked`] == true)
+
+        const checkAllState = users.every((user)=>checkValues[`${user._id}_checked`] == true)
+
+        // console.log('Global Active',showGlobalActive)
+
+        setShowGlobalButtons(showGlobalActive)
+        setCheckAllState(checkAllState)
         
-    },[users,pageNum,searchTerm,checkAll])
+    },[users,pageNum,searchTerm,checkValues])
 
     const handleDeleteUser = async (id)=>{
         //console.log(id)
@@ -126,27 +148,42 @@ const UserlistPage = (props) => {
 
         if(e.target.checked)
         {
-            setCheckAll(true)
+            const ckeckValue = {}
+
+            users.forEach(user=>{
+                ckeckValue[`${user._id}_checked`] = true
+            })
+            setCheckValues(ckeckValue)
         }
-        else{
-            setCheckAll(false)
+        else
+        {
+            const ckeckValue = {}
+
+            users.forEach(user=>{
+                ckeckValue[`${user._id}_checked`] = false
+            })
+            setCheckValues(ckeckValue)
         }
     }
 
     const handleCheckChange = (e)=>{
-
         if(e.target.checked)
         {
-            setSelectedUsers([...selectedUsers,e.target.value])
+            setCheckValues({...checkValues,[`${e.target.value}_checked`]:true})
         }
         else
         {
-            const filteredUsers = selectedUsers.filter(user=>user._id != e.target.value)
-            setSelectedUsers(filteredUsers)
-            setCheckAll(false)
+            setCheckValues({...checkValues,[`${e.target.value}_checked`]:false})
         }
     }
 
+    const handleSelectedUsersState = (e)=>{
+        console.log(e.target.checked)
+    }
+
+    const handleIndividualUsersState = (e)=>{
+        console.log(e.target.checked)
+    }
 
 
   return (
@@ -154,15 +191,26 @@ const UserlistPage = (props) => {
         <Navbar />
         <ToastContainer />
         <div className='container-fluid'>
-
-            <div className='row mt-2'>
+            <div className='row mt-3'>
                 <div className="col-3">
-                <div className="input-group mb-3">
-                    <span className="input-group-text" id="basic-addon1"><i className="bi bi-search"></i></span>
-                    <input type="text" className="form-control" placeholder="Search" onChange={handleSearchChange} />
+                    <div className="input-group mb-3">
+                        <span className="input-group-text" id="basic-addon1"><i className="bi bi-search"></i></span>
+                        <input type="text" className="form-control" placeholder="Search" onChange={handleSearchChange} />
+                    </div>
                 </div>
+                <div className="col-3 d-flex justify-content-end">
+                    {
+                      showGlobalButtons && <div className="form-check form-switch mt-2 ">
+                        <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" onChange={handleSelectedUsersState} />
+                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Active / Inactive</label>
+                    </div>
+                    }
+                    
                 </div>
-                <div className="col-9 text-end">
+                <div className="col-3 text-end">
+                    { showGlobalButtons && <button className="btn btn-outline-danger">Dlelete <i className="bi bi-trash"></i></button> }
+                </div>
+                <div className="col-3 text-end">
                     <Link href="/users/add">
                         <a className="btn btn-primary">Add User <i className="bi bi-person-plus-fill"></i></a>
                     </Link>
@@ -174,16 +222,16 @@ const UserlistPage = (props) => {
             <table className="table table-hover table-striped table-responsive">
                 <thead>
                     <tr>
-                        <th className='text-center'><input class="form-check-input" type="checkbox" name="selectAll" onChange={handleCheckAll} /></th>
-                        <th className='text-left '><i className="bi bi-person-fill px-2"></i></th>
-                        <th>Name</th>
+                        <th className='text-center'><input className="form-check-input" type="checkbox" name="selectAll" checked={checkAllState} onChange={handleCheckAll} /></th>
+                        {/* <th className='text-left '><i className="bi bi-person-fill px-2"></i></th> */}
+                        <th><i className="bi bi-person-fill px-2"></i> Name</th>
                         <th>Role</th>
                         <th className='text-center px-5'>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        filteretdUser && filteretdUser.map((data,index)=>{
+                        filteredUser && filteredUser.map((data,index)=>{
 
                             const role = roles.find(role=>{
                                 if(role.roleId==data.userRole)
@@ -192,32 +240,56 @@ const UserlistPage = (props) => {
                                 }
                             })
 
-                            const checkedValue = checkAll == true ? "true" : "";
+                            // const userCheckValue = checkValues.filter(value=>value.id==data._id)
+                            // const userCheckValue = checkValues[data._id].state
+                            // console.log('userCheckValue',userCheckValue)
+
+                            const checkValue = checkValues[`${data._id}_checked`]
 
                             return <>
                             <tr key={`${index}_row`}>
-                                <td className='text-center'><input class="form-check-input" type="checkbox" value={data._id} id="flexCheckDefault" checked={checkedValue} onChange={handleCheckChange} /></td>
-                                <td className='text-left'><Avatar name={data.name} size="29" round="15px" /></td>
-                                <td>{data.name}</td>
+                                <td className='text-center'><input className="form-check-input" type="checkbox" value={data._id} id="flexCheckDefault" checked={checkValue} onChange={handleCheckChange} /></td>
+                                {/* <td className='text-left'><Avatar name={data.name} size="29" round="15px" /></td> */}
+                                <td><Avatar name={data.name} size="29" round="15px" />  {data.name}</td>
                                 <td>{role.roleName}</td>
                                 <td className='text-center'>
                                     <Link href={`/users/edit/${data._id}`}>
                                         <a className=""><i className="bi bi-pencil-fill"></i></a>
                                     </Link>
-                                    <ChakraProvider>
+
+                                        <a className="mx-2 dropdown-toggle" id={`${data._id}_menuDropDown`} data-bs-toggle="dropdown" aria-expanded="false"><i className="bi bi-three-dots-vertical"></i></a>
+                                        <ul className="dropdown-menu" aria-labelledby={`${data._id}_menuDropDown`}>
+                                            <li className='list-group-item'>
+                                                <div className="form-check form-switch mt-2 ">
+                                                    <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" checked={data.isActive} value={data._id} onChange={handleIndividualUsersState} />
+                                                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{data.isActive ? "Active" : "Inactive"}</label>
+                                                </div>
+                                            </li>
+                                            <li className='list-group-item' onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){handleDeleteUser(data._id)}}}>
+                                                Delete <i className="bi bi-trash"></i>
+                                            </li>
+                                        </ul>
+                                        
+                                    {/*  */}
+                                   
+                                    {/* <ChakraProvider>
                                         <Menu>
                                             <MenuButton className="mx-2">
                                                 <i className="bi bi-three-dots-vertical"></i>
                                             </MenuButton>
                                             <MenuList>
-                                                <MenuItem>Active</MenuItem>
-                                                <MenuItem>Inactive</MenuItem>
+                                                <MenuItem>
+                                                    <div className="form-check form-switch mt-2 ">
+                                                        <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" checked={data.isActive} onChange={handleSelectedUsersState} />
+                                                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{data.isActive ? "Active" : "Inactive"}</label>
+                                                    </div>
+                                                </MenuItem>
                                                 <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
                                                     handleDeleteUser(data._id)
                                                 }}}>Delete <i className="bi bi-trash"></i></MenuItem>
                                             </MenuList>
                                         </Menu>
-                                    </ChakraProvider>
+                                    </ChakraProvider> */}
                                     
                                     {/* <button className="mx-2" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
                                         handleDeleteUser(data._id)

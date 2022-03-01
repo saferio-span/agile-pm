@@ -9,7 +9,7 @@ import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import absoluteUrl from 'next-absolute-url'
 import Select from 'react-select'
-import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box } from '@chakra-ui/react'
+import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box,ChakraProvider } from '@chakra-ui/react'
 
 export const getServerSideProps = async (context)=>{
     const { req, query, params } = context;
@@ -112,6 +112,10 @@ const Edit = ({userData, roles}) => {
         // console.log(user)
     }
 
+    const handleSelectedState = (e)=>{
+        console.log(e.target)
+    }
+
     const resetForm = ()=>{
         document.getElementById("updateUserForm").reset();
         document.getElementById("globalAccess").checked=false;
@@ -128,6 +132,7 @@ const Edit = ({userData, roles}) => {
     <>
         <Navbar />
         <ToastContainer />
+        <ChakraProvider>
         <div>
             <Heading as='h3' size='md' className='mt-3 mx-3'>
                 <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Edit User
@@ -157,8 +162,15 @@ const Edit = ({userData, roles}) => {
                             <div className="form-check">
                                 <input className="form-check-input"type="checkbox" defaultChecked={user.globalAccess} name='globalAccess' id="globalAccess" onChange={handleInputChange} />
                                 <label className="form-check-label" htmlFor="flexCheckDefault">
-                                Global Accesss
+                                    Global Accesss
                                 </label>
+                            </div>
+                        </div>
+
+                        <div className='mt-2'>
+                            <div className="form-check">
+                                <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault" onChange={handleSelectedState} />
+                                <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Active / Inactive</label>
                             </div>
                         </div>
 
@@ -186,9 +198,9 @@ const Edit = ({userData, roles}) => {
                         </div>
                     </FormControl>
                 </form>
-            </Box>  
-                
+            </Box>     
             </div>
+            </ChakraProvider>
     </>
   )
 }

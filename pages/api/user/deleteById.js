@@ -6,7 +6,7 @@ export default async function handler(req,res)
 {
     const {id} = req.body
 
-    User.findByIdAndDelete(id, (err) => {
+    await User.findByIdAndDelete(id, (err) => {
         if (err) {
             console.log(err);
             res.status(401).send('Failed');
