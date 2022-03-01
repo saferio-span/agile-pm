@@ -99,14 +99,14 @@ const AssignProject = ({userData, roles, projectData, assignedUsers}) => {
 
         const proId = projectData._id
         
-        const deleteProjectMember = await axios.post('/api/project/deleteProjectMember', {
-            updatedUserIds,
-            proId,
+        const deleteProjectMember = await axios.post('/api/project/assignProject', {
+            userIds:updatedUserIds,
+            projectId:proId,
         });
 
         if(deleteProjectMember.status == 200){
             setUserList(updatedUsers);
-            Router.reload()
+            // Router.reload()
             toast('User deleted succesfully');
         }
         else{
