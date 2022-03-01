@@ -22,6 +22,7 @@ import {
     Button,
     ChakraProvider
 } from '@chakra-ui/react';
+import styles from "../../styles/user.module.css"
 
 
 
@@ -53,7 +54,7 @@ const UserlistPage = (props) => {
     const [searchTerm,setSearchTerm] = useState("")
 
     const [filteredUser,setFilteredUser] = useState()
-    // const [selectedUsers,setSelectedUsers] = useState([])
+    const [selectedUsers,setSelectedUsers] = useState([])
 
     const initialCheckValue = {}
     const stateSwitch = {}
@@ -115,8 +116,10 @@ const UserlistPage = (props) => {
 
         setShowGlobalButtons(showGlobalActive)
         setCheckAllState(checkAllState)
+
+        console.log(selectedUsers)
         
-    },[users,pageNum,searchTerm,checkValues])
+    },[users,pageNum,searchTerm,checkValues,selectedUsers])
 
     const handleDeleteUser = async (id)=>{
         //console.log(id)
@@ -149,11 +152,14 @@ const UserlistPage = (props) => {
         if(e.target.checked)
         {
             const ckeckValue = {}
+            const userIds = []
 
             users.forEach(user=>{
                 ckeckValue[`${user._id}_checked`] = true
+                userIds.push(user._id)
             })
             setCheckValues(ckeckValue)
+            setSelectedUsers(userIds)
         }
         else
         {
@@ -163,28 +169,140 @@ const UserlistPage = (props) => {
                 ckeckValue[`${user._id}_checked`] = false
             })
             setCheckValues(ckeckValue)
+            setSelectedUsers([])
         }
+
+        console.log(selectedUsers)
     }
 
-    const handleCheckChange = (e)=>{
+    const handleCheckChange = async(e)=>{
+        console.log(e.target.value)
         if(e.target.checked)
         {
             setCheckValues({...checkValues,[`${e.target.value}_checked`]:true})
+            const userDetails =  selectedUsers.find(id=>id==e.target.value)
+            console.log(userDetails)
+            if(userDetails != undefined)
+            {
+                if(userDetails.length==0 )
+                {
+                    setSelectedUsers([...selectedUsers,e.target.value])
+                }
+            }
+            else
+            {
+                setSelectedUsers([...selectedUsers,e.target.value])
+            }
         }
         else
         {
             setCheckValues({...checkValues,[`${e.target.value}_checked`]:false})
+            const userDetails =  selectedUsers.filter(id=>id!=e.target.value)
+            setSelectedUsers(userDetails)
         }
     }
 
-    const handleSelectedUsersState = (e)=>{
+    const handleSelectedUsersState = async(e)=>{
+
         console.log(e.target.checked)
+        let isActive ;
+        if(e.target.checked)
+        {
+            isActive = true
+        }
+        else
+        {
+            isActive = false
+        }
+
+        const res = await axios.post("/api/user/states/multipleUsers",{
+            ids:selectedUsers,
+            isActive
+        })
+
+        if(res.status == 202)
+        {
+            toast(`Users state changed successfully`)
+            const getFilteredUser = users.map(user=>{
+                if(selectedUsers.includes(user._id))
+                {
+                    return {
+                        ...user,
+                        isActive
+                    }
+                }
+                else
+                {
+                    return user
+                }
+            })
+            setUsers(getFilteredUser)
+        }
+        else
+        {
+            toast.error("User state cannot be changed")
+        }
     }
 
-    const handleIndividualUsersState = (e)=>{
-        console.log(e.target.checked)
+    const handleActiveState = async(id,state)=>{
+
+        const res = await axios.post("/api/user/states/individualUser",{
+            _id:id,
+            isActive:state
+        })
+
+        if(res.status == 202)
+        {
+            toast(`User state changed successfully`)
+            const updatedUsers = users.map(user=>{
+                if(id==user._id)
+                {
+                    return{
+                        ...user,
+                        isActive:state
+                    }
+                }
+                else
+                {
+                    return user
+                }
+            })
+            setUsers(updatedUsers)
+        }
+        else
+        {
+            toast.error("User state cannot be changed")
+        }
+        
     }
 
+    const handleDeleteMultiple = async()=>{
+
+        const res = await axios.post("/api/user/delete/deleteMultipleUsers",{
+            ids:selectedUsers
+        })
+
+        if(res.status == 200)
+        {
+            toast(`User deleted successfully`)
+            const getFilteredUser = users.filter(user=>{
+                if(!selectedUsers.includes(user._id))
+                {
+                    return user
+                }
+            })
+
+            console.log(getFilteredUser)
+            setUsers(getFilteredUser)
+            setSelectedUsers([])
+        }
+        else
+        {
+            toast.error(`User cannot be deleted`)
+        }
+        // console.log("Delete clicked")
+        // console.log(selectedUsers)
+    }
 
   return (
     <>
@@ -208,7 +326,7 @@ const UserlistPage = (props) => {
                     
                 </div>
                 <div className="col-3 text-end">
-                    { showGlobalButtons && <button className="btn btn-outline-danger">Dlelete <i className="bi bi-trash"></i></button> }
+                    { showGlobalButtons && <button className="btn btn-outline-danger" onClick={handleDeleteMultiple} >Delete <i className="bi bi-trash"></i></button> }
                 </div>
                 <div className="col-3 text-end">
                     <Link href="/users/add">
@@ -219,7 +337,7 @@ const UserlistPage = (props) => {
         </div>
 
         <div className="mx-2 ">
-            <table className="table table-hover table-striped table-responsive">
+            <table className="table table-responsive">
                 <thead>
                     <tr>
                         <th className='text-center'><input className="form-check-input" type="checkbox" name="selectAll" checked={checkAllState} onChange={handleCheckAll} /></th>
@@ -247,7 +365,7 @@ const UserlistPage = (props) => {
                             const checkValue = checkValues[`${data._id}_checked`]
 
                             return <>
-                            <tr key={`${index}_row`}>
+                            <tr key={`${index}_row`} class={data.isActive ? "" : styles.tableMutedColor}>
                                 <td className='text-center'><input className="form-check-input" type="checkbox" value={data._id} id="flexCheckDefault" checked={checkValue} onChange={handleCheckChange} /></td>
                                 {/* <td className='text-left'><Avatar name={data.name} size="29" round="15px" /></td> */}
                                 <td><Avatar name={data.name} size="29" round="15px" />  {data.name}</td>
@@ -259,12 +377,16 @@ const UserlistPage = (props) => {
 
                                         <a className="mx-2 dropdown-toggle" id={`${data._id}_menuDropDown`} data-bs-toggle="dropdown" aria-expanded="false"><i className="bi bi-three-dots-vertical"></i></a>
                                         <ul className="dropdown-menu" aria-labelledby={`${data._id}_menuDropDown`}>
-                                            <li className='list-group-item'>
-                                                <div className="form-check form-switch mt-2 ">
-                                                    <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" checked={data.isActive} value={data._id} onChange={handleIndividualUsersState} />
-                                                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{data.isActive ? "Active" : "Inactive"}</label>
-                                                </div>
-                                            </li>
+                                            {/* <li className='list-group-item'>
+                                                {
+                                                    data.isActive && <button className="btn btn-secondary">Set as Inactive</button>
+                                                }
+                                                {
+                                                    !data.isActive && <button className="btn btn-success">Set as Active</button>
+                                                }
+                                            </li> */}
+                                            { data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,false)}>Set as Inactive</button>}
+                                            { !data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,true)}>Set as Active</button>}
                                             <li className='list-group-item' onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){handleDeleteUser(data._id)}}}>
                                                 Delete <i className="bi bi-trash"></i>
                                             </li>

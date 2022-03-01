@@ -113,11 +113,11 @@ const ProjectListPage = ({projectsList}) => {
                                 <td>{data.description}</td>
                                 <td className='text-center'>
                                     <Link href={`/projects/editProject/${data._id}`}>
-                                        <a className=""><i class="bi bi-pencil-fill"></i></a>
+                                        <a className=""><i className="bi bi-pencil-fill"></i></a>
                                     </Link>
                                     <Menu>
                                         <MenuButton className="mx-2">
-                                            <i class="bi bi-three-dots-vertical"></i>
+                                            <i className="bi bi-three-dots-vertical"></i>
                                         </MenuButton>
                                         <MenuList>
                                             <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this project !")){

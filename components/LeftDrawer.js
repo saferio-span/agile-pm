@@ -50,10 +50,10 @@ import Link from 'next/link';
                     <button type="button" className="list-group-item list-group-item-action">Users</button>
                   </Link>
                   <Link href={`/projects`}>
-                    <button type="button" class="list-group-item list-group-item-action">Projects</button>
+                    <button type="button" className="list-group-item list-group-item-action">Projects</button>
                   </Link>
                   <Link href={`/settings`}>
-                    <button type="button" class="list-group-item list-group-item-action">Settings</button>
+                    <button type="button" className="list-group-item list-group-item-action">Settings</button>
                   </Link>
               </ul>
             </DrawerBody>
