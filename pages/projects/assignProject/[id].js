@@ -95,7 +95,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
     const [members, setMembers] = useState(membersDefaultList)
     const [userList, setUserList] = useState(assignedUsers);
     const [userTableList, setUserTableList] = useState(dbAssignedUserData); 
-    // const [defaultDbList, setDefaultDbList]
+    const [defaultDbList, setDefaultDbList] = useState(assignedUsers);
 
 
     const handleRoleOption = (e) => {
@@ -154,7 +154,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                 const upatedUsers = userData.filter((user) => updatedIdList.includes(user._id));
                 setUserTableList(upatedUsers);
                 //console.log('upatedUsers', upatedUsers)
-                console.log('Table List', userTableList)
+                //console.log('Table List', userTableList)
               }
               else{
                 toast("Project cannot be assigned")
@@ -165,9 +165,11 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
         }
     }
 
+
+
     const handleDeleteProjectMember = async (id) => {
-        console.log('Delete Member', id);
-        console.log('List', userList);
+        // console.log('Delete Member', id);
+        // console.log('List', userList);
 
         let updatedListArray = [];
         let updatedUserIds ;
@@ -181,7 +183,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             }
         })
         updatedUserIds = updatedListArray
-        const proId = projectData.projectId
+        //const proId = projectData.projectId
         //console.log("UpdatedList", updatedListArray);
 
         const updateProjectMember = await axios.post('/api/project/assignProject', {
@@ -205,13 +207,69 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             }
             setUserTableList(upatedListUsers);
             setUserList(updatedDrawerList);
-            console.log('Updated List', upatedListUsers)
+            setDefaultDbList(updatedDrawerList);
+            // assignedUsers = updatedDrawerList;
+            //console.log('Updated List', upatedListUsers)
             toast('User deleted succesfully');
         }
         else{
             toast.error('User cannot be deleted');
         }
     }
+
+
+
+    const toggleCheckbox = (e) => {
+        var checkboxes = document.getElementsByName('individualSelectMember');
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i] != e.target){
+                checkboxes[i].checked = e.target.checked; 
+            }     
+        }
+    }
+
+
+
+    const handleIndividualcheckbox = (e) => {
+        // console.log('Individual Check', e);
+        if(e.target.checked == false){
+            document.getElementById("bulkSelectMember").checked = false;
+        }
+        else{
+            var checkboxes = document.getElementsByName('individualSelectMember');
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked){
+                    document.getElementById("bulkSelectMember").checked = true;
+                }     
+            }
+        }
+    }
+
+
+    const handleBulkDelete = () => {
+        // console.log('Bulk Delete')
+        let onlySelectedUser = [];
+        let bulkuser = [];
+        var bulkSelect = document.getElementById("bulkSelectMember").checked;
+        var checkboxes = document.getElementsByName('individualSelectMember');
+        if(bulkSelect == true){
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked){
+                    bulkuser.push(checkboxes[i].value)
+                }
+            } 
+            console.log('Bulk Delete Checked', bulkuser);
+        }
+        else{
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked){
+                    onlySelectedUser.push(checkboxes[i].value)
+                }
+            } 
+            console.log('Only Selected Member', onlySelectedUser)
+        }
+    }
+
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
@@ -223,6 +281,13 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
       <ToastContainer />
         <div className='container-fluid'>
             <div className='row mt-3'>
+                <div className="col-4 offset-3 d-flex justify-content-end">
+                    <Text fontSize='2xl'>{projectData.projectname}</Text>
+                </div>
+            </div>
+        </div>
+        <div className='container-fluid'>
+            <div className='row mt-3'>
                 <div className="col-3">
                     <InputGroup>
                         <InputLeftElement
@@ -232,9 +297,10 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                         <Input type='tel' placeholder='Search Users...' />
                     </InputGroup>
                 </div>
-                <div className="col-3 offset-6 d-flex justify-content-end">
-                    {/* <AssignProjectUserDrawer members={userData} roles={roles} updateHandler={updatedUserArray} assignedUsers={userList} projectId={projectData._id}/> */}
-                    {/* <ChildContainer members={userData} roles={roles} updateHandler={updatedUserArray} assignedUsers={userList} projectId={projectData._id} /> */}
+                <div className='col-3 offset-3'>
+                    <button className="btn btn-outline-danger" onClick={handleBulkDelete}>Dlelete <i className="bi bi-trash"></i></button>
+                </div>
+                <div className="col-3 d-flex justify-content-end">
                     <Button ref={btnRef}  onClick={onOpen} colorScheme='blue'>
                         <a>Assign Project Member <i className="bi bi-person-plus-fill"></i></a>
                     </Button>
@@ -262,7 +328,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                             <div className='my-4'>
                                 <FormLabel htmlFor='email'>Choose Members<span className='text-danger'>*</span></FormLabel>
                                 <Select
-                                    defaultValue={assignedUsers}
+                                    defaultValue={defaultDbList}
                                     closeMenuOnSelect={false}
                                     components={animatedComponents}
                                     onChange={handleSelectedMembers}
@@ -302,11 +368,11 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             </div>
         </div>
 
-        <div className="mx-2 my-2 ">
+        <div className="mx-2 my-2 mt-3">
             <table className="table table-hover table-striped table-responsive">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th><input className="form-check-input" type="checkbox" name='bulkSelectMember' id="bulkSelectMember" onChange={toggleCheckbox}></input></th>
                         <th>Name</th>
                         <th>Job Title</th>
                         <th className='text-center px-5'></th>
@@ -319,8 +385,8 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                         return <>
                             <tr key={`userProjectTable${index}`}>
                                 <td>
-                                    <div className='mt-4'>
-                                        <Checkbox name='ProjectAccess' id="ProjectAccess"></Checkbox>
+                                    <div className='mt-3'>
+                                        <input className="form-check-input" type="checkbox" name='individualSelectMember' id="individualSelectMember" value={user._id} onChange={handleIndividualcheckbox} />
                                     </div>
                                 </td>
                                 <td>
