@@ -1,3 +1,8 @@
 .tableMutedColor{
   background-color: #C1C1C1;
 }
+
+.imageContainer
+{
+  object-fit: contain;
+}

@@ -5,7 +5,7 @@ connectDB()
 
 export default async function handler(req,res)
 {
-    const {name,email,role,phone,previlage,globalAccess} = req.body    
+    const {name,email,role,phone,previlage,globalAccess,imageUrl} = req.body    
 
     const user = new User()
     user.name = name
@@ -16,6 +16,7 @@ export default async function handler(req,res)
     user.userRole = role
     user.globalAccess = globalAccess
     user.isActive = true
+    user.imageUrl = imageUrl
 
     console.log(user);
 

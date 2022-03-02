@@ -8,20 +8,10 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '@chakra-ui/icons';
-import { Input, InputGroup,  InputLeftElement,FormHelperText,Heading,Text,Checkbox } from '@chakra-ui/react'
+import { Input, InputGroup,  InputLeftElement,ChakraProvider} from '@chakra-ui/react'
 import absoluteUrl from 'next-absolute-url'
 import ReactPaginate from "react-paginate"
 import Avatar from 'react-avatar';
-import { 
-    Flex, 
-    Spacer , 
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Button,
-    ChakraProvider
-} from '@chakra-ui/react';
 import styles from "../../styles/user.module.css"
 
 
@@ -123,7 +113,7 @@ const UserlistPage = (props) => {
 
     const handleDeleteUser = async (id)=>{
         //console.log(id)
-        const res = await axios.post('/api/user/deleteById',{
+        const res = await axios.post('/api/user/delete/deleteById',{
             id
         })
 
@@ -307,144 +297,158 @@ const UserlistPage = (props) => {
   return (
     <>
         <Navbar />
-        <ToastContainer />
-        <div className='container-fluid'>
-            <div className='row mt-3'>
-                <div className="col-3">
-                    <div className="input-group mb-3">
-                        <span className="input-group-text" id="basic-addon1"><i className="bi bi-search"></i></span>
-                        <input type="text" className="form-control" placeholder="Search" onChange={handleSearchChange} />
+        <div className='custom-body'>
+            <ToastContainer />
+            <div className='container-fluid'>
+                <div className='row mt-3'>
+                    <ChakraProvider>
+                    <div className="col-3">
+                        
+                            <InputGroup>
+                                <InputLeftElement
+                                    pointerEvents='none'
+                                    children={<SearchIcon color='gray.300' />}
+                                />
+                                <Input type='text' onChange={handleSearchChange} placeholder='Search Users...' />
+                            </InputGroup>   
+                        
                     </div>
-                </div>
-                <div className="col-3 d-flex justify-content-end">
-                    {
-                      showGlobalButtons && <div className="form-check form-switch mt-2 ">
-                        <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" onChange={handleSelectedUsersState} />
-                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Active / Inactive</label>
+                    </ChakraProvider>
+                    <div className="col-3 d-flex justify-content-end">
+                        {
+                        showGlobalButtons && <div className="form-check form-switch mt-2 ">
+                            <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" onChange={handleSelectedUsersState} />
+                            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Active / Inactive</label>
+                        </div>
+                        }
+                        
                     </div>
-                    }
-                    
-                </div>
-                <div className="col-3 text-end">
-                    { showGlobalButtons && <button className="btn btn-outline-danger" onClick={handleDeleteMultiple} >Delete <i className="bi bi-trash"></i></button> }
-                </div>
-                <div className="col-3 text-end">
-                    <Link href="/users/add">
-                        <a className="btn btn-primary">Add User <i className="bi bi-person-plus-fill"></i></a>
-                    </Link>
+                    <div className="col-3 text-end">
+                        { showGlobalButtons && <button className="btn btn-outline-danger" onClick={handleDeleteMultiple} >Delete <i className="bi bi-trash"></i></button> }
+                    </div>
+                    <div className="col-3 text-end">
+                        <Link href="/users/add">
+                            <a className="btn btn-primary">Add User <i className="bi bi-person-plus-fill"></i></a>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div className="mx-2 ">
-            <table className="table table-responsive">
-                <thead>
-                    <tr>
-                        <th className='text-center'><input className="form-check-input" type="checkbox" name="selectAll" checked={checkAllState} onChange={handleCheckAll} /></th>
-                        {/* <th className='text-left '><i className="bi bi-person-fill px-2"></i></th> */}
-                        <th><i className="bi bi-person-fill px-2"></i> Name</th>
-                        <th>Role</th>
-                        <th className='text-center px-5'>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        filteredUser && filteredUser.map((data,index)=>{
+            <div className="mx-2 ">
+                <table className="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th className='text-center'><input className="form-check-input" type="checkbox" name="selectAll" checked={checkAllState} onChange={handleCheckAll} /></th>
+                            {/* <th className='text-left '><i className="bi bi-person-fill px-2"></i></th> */}
+                            <th><i className="bi bi-person-fill px-2"></i> Name</th>
+                            <th>Role</th>
+                            <th className='text-center px-5'>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            filteredUser && filteredUser.map((data,index)=>{
 
-                            const role = roles.find(role=>{
-                                if(role.roleId==data.userRole)
-                                {
-                                    return role
-                                }
-                            })
+                                const role = roles.find(role=>{
+                                    if(role.roleId==data.userRole)
+                                    {
+                                        return role
+                                    }
+                                })
 
-                            // const userCheckValue = checkValues.filter(value=>value.id==data._id)
-                            // const userCheckValue = checkValues[data._id].state
-                            // console.log('userCheckValue',userCheckValue)
+                                // const userCheckValue = checkValues.filter(value=>value.id==data._id)
+                                // const userCheckValue = checkValues[data._id].state
+                                // console.log('userCheckValue',userCheckValue)
 
-                            const checkValue = checkValues[`${data._id}_checked`]
+                                const checkValue = checkValues[`${data._id}_checked`]
 
-                            return <>
-                            <tr key={`${index}_row`} class={data.isActive ? "" : styles.tableMutedColor}>
-                                <td className='text-center'><input className="form-check-input" type="checkbox" value={data._id} id="flexCheckDefault" checked={checkValue} onChange={handleCheckChange} /></td>
-                                {/* <td className='text-left'><Avatar name={data.name} size="29" round="15px" /></td> */}
-                                <td><Avatar name={data.name} size="29" round="15px" />  {data.name}</td>
-                                <td>{role.roleName}</td>
-                                <td className='text-center'>
-                                    <Link href={`/users/edit/${data._id}`}>
-                                        <a className=""><i className="bi bi-pencil-fill"></i></a>
-                                    </Link>
+                                return <>
+                                <tr key={`${index}_row`} className={data.isActive ? "" : styles.tableMutedColor}>
+                                    <td className='text-center'><input className="form-check-input" type="checkbox" value={data._id} id="flexCheckDefault" checked={checkValue} onChange={handleCheckChange} /></td>
+                                    {/* <td className='text-left'><Avatar name={data.name} size="29" round="15px" /></td> */}
+                                    <td>
+                                        {
+                                            data.imageUrl != "" && data.imageUrl != null ? <Avatar name={data.name} src={data.imageUrl} size="29" round="15px" />  : <Avatar name={data.name} size="29" round="15px" />
+                                        }
+                                        <span> {data.name}</span>
+                                       </td> 
+                                    <td>{role.roleName}</td>
+                                    <td className='text-center'>
+                                        <Link href={`/users/edit/${data._id}`}>
+                                            <a className=""><i className="bi bi-pencil-fill"></i></a>
+                                        </Link>
 
-                                        <a className="mx-2 dropdown-toggle" id={`${data._id}_menuDropDown`} data-bs-toggle="dropdown" aria-expanded="false"><i className="bi bi-three-dots-vertical"></i></a>
-                                        <ul className="dropdown-menu" aria-labelledby={`${data._id}_menuDropDown`}>
-                                            {/* <li className='list-group-item'>
-                                                {
-                                                    data.isActive && <button className="btn btn-secondary">Set as Inactive</button>
-                                                }
-                                                {
-                                                    !data.isActive && <button className="btn btn-success">Set as Active</button>
-                                                }
-                                            </li> */}
-                                            { data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,false)}>Set as Inactive</button>}
-                                            { !data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,true)}>Set as Active</button>}
-                                            <li className='list-group-item' onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){handleDeleteUser(data._id)}}}>
-                                                Delete <i className="bi bi-trash"></i>
-                                            </li>
-                                        </ul>
-                                        
-                                    {/*  */}
-                                   
-                                    {/* <ChakraProvider>
-                                        <Menu>
-                                            <MenuButton className="mx-2">
-                                                <i className="bi bi-three-dots-vertical"></i>
-                                            </MenuButton>
-                                            <MenuList>
-                                                <MenuItem>
-                                                    <div className="form-check form-switch mt-2 ">
-                                                        <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" checked={data.isActive} onChange={handleSelectedUsersState} />
-                                                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{data.isActive ? "Active" : "Inactive"}</label>
-                                                    </div>
-                                                </MenuItem>
-                                                <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
-                                                    handleDeleteUser(data._id)
-                                                }}}>Delete <i className="bi bi-trash"></i></MenuItem>
-                                            </MenuList>
-                                        </Menu>
-                                    </ChakraProvider> */}
+                                            <a className="mx-2 dropdown-toggle" id={`${data._id}_menuDropDown`} data-bs-toggle="dropdown" aria-expanded="false"><i className="bi bi-three-dots-vertical"></i></a>
+                                            <ul className="dropdown-menu" aria-labelledby={`${data._id}_menuDropDown`}>
+                                                {/* <li className='list-group-item'>
+                                                    {
+                                                        data.isActive && <button className="btn btn-secondary">Set as Inactive</button>
+                                                    }
+                                                    {
+                                                        !data.isActive && <button className="btn btn-success">Set as Active</button>
+                                                    }
+                                                </li> */}
+                                                { data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,false)}>Set as Inactive</button>}
+                                                { !data.isActive && <button type="button" className="list-group-item list-group-item-action" onClick={()=>handleActiveState(data._id,true)}>Set as Active</button>}
+                                                <li className='list-group-item' onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){handleDeleteUser(data._id)}}}>
+                                                    Delete <i className="bi bi-trash"></i>
+                                                </li>
+                                            </ul>
+                                            
+                                        {/*  */}
                                     
-                                    {/* <button className="mx-2" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
-                                        handleDeleteUser(data._id)
-                                    }}}><i className="bi bi-three-dots-vertical"></i></button> */}
-                                </td>
-                            </tr>
-                        </>
-                        })
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div className="row">
-            <div className="col offset-s4">
-                <ReactPaginate
-                    previousLabel={"<"}
-                    nextLabel={">"}
-                    breakLabel={"..."}
-                    pageCount={pageCount??0}
-                    marginPagesDisplayed={2}
-                    pageRangeDisplayed={3}
-                    onPageChange={handlePageClick}
-                    containerClassName={"pagination justify-content-center"}
-                    pageClassName={"page-item"}
-                    pageLinkClassName={"page-link"}
-                    previousClassName={"page-item"}
-                    previousLinkClassName={"page-link"}
-                    nextClassName={"page-item"}
-                    nextLinkClassName={"page-link"}
-                    breakClassName={"page-item"}
-                    breakLinkClassName={"page-link"}
-                    activeClassName={"active"}
-                />
+                                        {/* <ChakraProvider>
+                                            <Menu>
+                                                <MenuButton className="mx-2">
+                                                    <i className="bi bi-three-dots-vertical"></i>
+                                                </MenuButton>
+                                                <MenuList>
+                                                    <MenuItem>
+                                                        <div className="form-check form-switch mt-2 ">
+                                                            <input className="form-check-input mr-1" type="checkbox" id="flexSwitchCheckDefault" checked={data.isActive} onChange={handleSelectedUsersState} />
+                                                            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">{data.isActive ? "Active" : "Inactive"}</label>
+                                                        </div>
+                                                    </MenuItem>
+                                                    <MenuItem onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
+                                                        handleDeleteUser(data._id)
+                                                    }}}>Delete <i className="bi bi-trash"></i></MenuItem>
+                                                </MenuList>
+                                            </Menu>
+                                        </ChakraProvider> */}
+                                        
+                                        {/* <button className="mx-2" onClick={()=>{if(window.confirm("Are you sure? You want to delete this user !")){
+                                            handleDeleteUser(data._id)
+                                        }}}><i className="bi bi-three-dots-vertical"></i></button> */}
+                                    </td>
+                                </tr>
+                            </>
+                            })
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div className="row">
+                <div className="col offset-s4">
+                    <ReactPaginate
+                        previousLabel={"<"}
+                        nextLabel={">"}
+                        breakLabel={"..."}
+                        pageCount={pageCount??0}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={3}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination justify-content-center"}
+                        pageClassName={"page-item"}
+                        pageLinkClassName={"page-link"}
+                        previousClassName={"page-item"}
+                        previousLinkClassName={"page-link"}
+                        nextClassName={"page-item"}
+                        nextLinkClassName={"page-link"}
+                        breakClassName={"page-item"}
+                        breakLinkClassName={"page-link"}
+                        activeClassName={"active"}
+                    />
+                </div>
             </div>
         </div>
     </>
