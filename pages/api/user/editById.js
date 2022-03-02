@@ -4,9 +4,9 @@ connectDB()
 
 export default async function handler(req,res)
 {
-    const {_id, name, email, userRole, globalAccess, mobile } = req.body
+    const {_id, name, email, userRole, globalAccess, mobile, imageUrl } = req.body
     console.log(req.body)
-    User.findByIdAndUpdate(_id, {name, email, userRole, globalAccess, mobile}, (err) => {
+    User.findByIdAndUpdate(_id, {name, email, userRole, globalAccess, mobile, imageUrl}, (err) => {
         if (err) {
             console.log(err);
             res.status(401).send('Failed');

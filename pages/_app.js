@@ -7,7 +7,7 @@ import Script from 'next/script'
 import Router from "next/router"
 import NProgress from "nprogress"
 // import { ChakraProvider } from '@chakra-ui/react'
-// import "../styles/login.css"
+import "../styles/global.css"
 
 function MyApp({ Component, pageProps}) {
   Router.events.on("routeChangeStart",(url)=>{
