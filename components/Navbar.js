@@ -95,7 +95,7 @@ const Navbar = () => {
     return (
         <ChakraProvider>       
             <div>
-                <Flex bg='#1A365D' p='2'>
+                <Flex bg='#1A365D' p='2' pos="fixed" w="100%" zIndex={2}>
                     <Box p='2'>
                     <LeftDrawer />
                     </Box>

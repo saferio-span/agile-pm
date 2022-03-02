@@ -88,44 +88,46 @@ const AddProject = () => {
 
   return (
     <>
-      <ChakraProvider>
       <Navbar />
-      <ToastContainer />
-        <div>
-          <Heading as='h3' size='md' className='mt-3 mx-3'>
-              <div className="row">
-                  <div className="col-11">
-                      <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/projects`}>Projects</Link> {`>`} Add Project
+      <div className='custom-body'>
+        <ChakraProvider>
+          <ToastContainer />
+            <div>
+              <Heading as='h3' size='md' className='mt-3 mx-3'>
+                  <div className="row">
+                      <div className="col-11">
+                          <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/projects`}>Projects</Link> {`>`} Add Project
+                      </div>
+                      <div className="col-1">
+                          <Link href="/projects">
+                              <a className="btn btn-danger">Back</a>
+                          </Link>
+                      </div>
                   </div>
-                  <div className="col-1">
-                      <Link href="/projects">
-                          <a className="btn btn-danger">Back</a>
-                      </Link>
-                  </div>
-              </div>
-          </Heading>  
-          <Box className='mt-3 mx-5'>
-            <form onSubmit={handleSubmit} id="createProjectForm">
-              <Text fontSize='2xl'>Project Details</Text>
-              <FormControl>
-                <div className='mt-2'>
-                    <FormLabel htmlFor='email'>Project Name <span className='text-danger'>*</span></FormLabel>
-                    <Input id='projectname' name="projectname" type='text' onChange={handleInputChange} />
-                </div>
-                <div className='mt-2'>
-                    <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>
-                    {/* <Input id='description' name="description" type='text' onChange={handleInputChange} /> */}
-                    <Textarea name="description" onChange={handleInputChange} />
-                </div>
-                <div className='my-3 d-flex justify-content-end'>
-                    <button type='submit' className="btn btn-primary mx-2">Create Project</button>
-                    <button type='reset' onClick={resetForm} className="btn btn-secondary mx-2">Cancel</button> 
-                </div>
-              </FormControl>
-          </form>
-        </Box>    
+              </Heading>  
+              <Box className='mt-3 mx-5'>
+                <form onSubmit={handleSubmit} id="createProjectForm">
+                  <Text fontSize='2xl'>Project Details</Text>
+                  <FormControl>
+                    <div className='mt-2'>
+                        <FormLabel htmlFor='email'>Project Name <span className='text-danger'>*</span></FormLabel>
+                        <Input id='projectname' name="projectname" type='text' onChange={handleInputChange} />
+                    </div>
+                    <div className='mt-2'>
+                        <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>
+                        {/* <Input id='description' name="description" type='text' onChange={handleInputChange} /> */}
+                        <Textarea name="description" onChange={handleInputChange} />
+                    </div>
+                    <div className='my-3 d-flex justify-content-end'>
+                        <button type='submit' className="btn btn-primary mx-2">Create Project</button>
+                        <button type='reset' onClick={resetForm} className="btn btn-secondary mx-2">Cancel</button> 
+                    </div>
+                  </FormControl>
+              </form>
+            </Box>    
+          </div>
+        </ChakraProvider>
       </div>
-      </ChakraProvider>
     </>
   )
 }
