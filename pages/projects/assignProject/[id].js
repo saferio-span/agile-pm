@@ -18,6 +18,7 @@ import { Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerCo
 import { useDisclosure } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react'
 import Router from 'next/router'
+import style from '../../../styles/project.module.css'
 
 const animatedComponents = makeAnimated();
 
@@ -62,6 +63,7 @@ export const getServerSideProps = async (context) => {
 const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
     //console.log('dbAssignedUsers', dbAssignedUsers);
+    // document.getElementById("bulkDeleteAssignedMembers").style.display = "none";
 
     const [{user_details},dispatch] = useUserValue();
 
@@ -268,6 +270,10 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             } 
             console.log('Only Selected Member', onlySelectedUser)
         }
+
+        if(bulkuser.length == 0 && onlySelectedUser == 0){
+            toast.error('Please select the members')
+        }
     }
 
 
@@ -276,146 +282,148 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
   return (
     <>
-      <ChakraProvider>
       <Navbar />
-      <ToastContainer />
-        <div className='container-fluid'>
-            <div className='row mt-3'>
-                <div className="col-4 offset-3 d-flex justify-content-end">
-                    <Text fontSize='2xl'>{projectData.projectname}</Text>
+        <div className='custom-body'>
+        <ChakraProvider>
+            <ToastContainer />
+                <div className='container-fluid'>
+                    <div className='row mt-3'>
+                        <div className="col-4 offset-3 d-flex justify-content-end">
+                            <Text fontSize='2xl'>{projectData.projectname}</Text>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div className='container-fluid'>
-            <div className='row mt-3'>
-                <div className="col-3">
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents='none'
-                            children={<SearchIcon color='gray.300' />}
-                        />
-                        <Input type='tel' placeholder='Search Users...' />
-                    </InputGroup>
-                </div>
-                <div className='col-3 offset-3'>
-                    <button className="btn btn-outline-danger" onClick={handleBulkDelete}>Dlelete <i className="bi bi-trash"></i></button>
-                </div>
-                <div className="col-3 d-flex justify-content-end">
-                    <Button ref={btnRef}  onClick={onOpen} colorScheme='blue'>
-                        <a>Assign Project Member <i className="bi bi-person-plus-fill"></i></a>
-                    </Button>
-                    <Drawer
-                        isOpen={isOpen}
-                        placement='right'
-                        onClose={onClose}
-                        finalFocusRef={btnRef}
-                        size='lg'
-                    >
-                    <DrawerOverlay />
-                    <DrawerContent>
-                        <DrawerCloseButton />
-                        <DrawerHeader>Assign members to projects</DrawerHeader>
-            
-                        <DrawerBody>
-                            <div className='mt-2'>
-                                <FormLabel htmlFor='email'>Choose Role</FormLabel>
-                                <Select
-                                    onChange={handleRoleOption}
-                                    options={rolesOptions}
-                                    isClearable={true}
+                <div className='container-fluid'>
+                    <div className='row mt-3'>
+                        <div className="col-3">
+                            <InputGroup>
+                                <InputLeftElement
+                                    pointerEvents='none'
+                                    children={<SearchIcon color='gray.300' />}
                                 />
-                            </div>
-                            <div className='my-4'>
-                                <FormLabel htmlFor='email'>Choose Members<span className='text-danger'>*</span></FormLabel>
-                                <Select
-                                    defaultValue={defaultDbList}
-                                    closeMenuOnSelect={false}
-                                    components={animatedComponents}
-                                    onChange={handleSelectedMembers}
-                                    isMulti
-                                    options={members}
-                                />
-                            </div>
-                            <div className='mx-4'>
-                                {userList && userList.map((user, index) => {
-                                    return <>
-                                        <List spacing={3} key={`${index}_row`}>
-                                            <ListItem>
-                                                <HStack spacing='20px'>
+                                <Input type='tel' placeholder='Search Users...' />
+                            </InputGroup>
+                        </div>
+                        <div className='col-3 offset-3'>
+                            <button className="btn btn-outline-danger" id="bulkDeleteAssignedMembers" onClick={handleBulkDelete}>Dlelete <i className="bi bi-trash"></i></button>
+                        </div>
+                        <div className="col-3 d-flex justify-content-end">
+                            <Button ref={btnRef}  onClick={onOpen} colorScheme='blue'>
+                                <a>Assign Project Member <i className="bi bi-person-plus-fill"></i></a>
+                            </Button>
+                            <Drawer
+                                isOpen={isOpen}
+                                placement='right'
+                                onClose={onClose}
+                                finalFocusRef={btnRef}
+                                size='lg'
+                            >
+                            <DrawerOverlay />
+                            <DrawerContent>
+                                <DrawerCloseButton />
+                                <DrawerHeader>Assign members to projects</DrawerHeader>
+                    
+                                <DrawerBody>
+                                    <div className='mt-2'>
+                                        <FormLabel htmlFor='email'>Choose Role</FormLabel>
+                                        <Select
+                                            onChange={handleRoleOption}
+                                            options={rolesOptions}
+                                            isClearable={true}
+                                        />
+                                    </div>
+                                    <div className='my-4'>
+                                        <FormLabel htmlFor='email'>Choose Members<span className='text-danger'>*</span></FormLabel>
+                                        <Select
+                                            defaultValue={defaultDbList}
+                                            closeMenuOnSelect={false}
+                                            components={animatedComponents}
+                                            onChange={handleSelectedMembers}
+                                            isMulti
+                                            options={members}
+                                        />
+                                    </div>
+                                    <div className={`${style.scroller} mx-4`} >
+                                        {userList && userList.map((user, index) => {
+                                            return <>
+                                                <List spacing={3} key={`${index}_row`}>
+                                                    <ListItem>
+                                                        <HStack spacing='20px'>
+                                                        <Box w='50px' h='40px'>
+                                                            <Avatar name={user.label} size="50" round="25px" />
+                                                        </Box>
+                                                        <Box w='200px' h='40px' className='mt-3'>
+                                                            {user.label}
+                                                        </Box>
+                                                        </HStack>
+                                                    </ListItem>
+                                                </List>
+                                            </>
+                                        })}
+                                    </div>
+                                </DrawerBody>
+                    
+                                <DrawerFooter>
+                                <Button variant='outline' mr={3} onClick={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleAssign} colorScheme='blue'>Assign</Button>
+                                </DrawerFooter>
+                            </DrawerContent>
+                            </Drawer>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mx-2 my-2 mt-3">
+                    <table className="table table-hover table-striped table-responsive">
+                        <thead>
+                            <tr>
+                                <th><input className="form-check-input" type="checkbox" name='bulkSelectMember' id="bulkSelectMember" onChange={toggleCheckbox}></input></th>
+                                <th>Name</th>
+                                <th>Job Title</th>
+                                <th className='text-center px-5'></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {userTableList && userTableList.map((user, index) => {
+                                const role = roles.find((role) => user.userRole == role.roleId)
+
+                                return <>
+                                    <tr key={`userProjectTable${index}`}>
+                                        <td>
+                                            <div className='mt-3'>
+                                                <input className="form-check-input" type="checkbox" name='individualSelectMember' id="individualSelectMember" value={user._id} onChange={handleIndividualcheckbox} />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <HStack spacing='20px'>
                                                 <Box w='50px' h='40px'>
-                                                    <Avatar name={user.label} size="50" round="25px" />
+                                                    <Avatar name={user.name} size="40" round="25px" />
                                                 </Box>
                                                 <Box w='200px' h='40px' className='mt-3'>
-                                                    {user.label}
+                                                    <p>{user.name}</p>
                                                 </Box>
-                                                </HStack>
-                                            </ListItem>
-                                        </List>
-                                    </>
-                                })}
-                            </div>
-                        </DrawerBody>
-            
-                        <DrawerFooter>
-                        <Button variant='outline' mr={3} onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleAssign} colorScheme='blue'>Assign</Button>
-                        </DrawerFooter>
-                    </DrawerContent>
-                    </Drawer>
+                                            </HStack>
+                                        </td>
+                                        <td>
+                                            <p className='mt-3'>
+                                                {role.roleName}
+                                            </p>
+                                        </td>
+                                        <td className='text-center'>
+                                            <button className='mt-3' onClick={()=>{if(window.confirm("Are you sure? You want to remove the user(s) from this project !")){
+                                                    handleDeleteProjectMember(user._id)
+                                                }}}> <i className="bi bi-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </>
+                            })}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            </ChakraProvider>
         </div>
-
-        <div className="mx-2 my-2 mt-3">
-            <table className="table table-hover table-striped table-responsive">
-                <thead>
-                    <tr>
-                        <th><input className="form-check-input" type="checkbox" name='bulkSelectMember' id="bulkSelectMember" onChange={toggleCheckbox}></input></th>
-                        <th>Name</th>
-                        <th>Job Title</th>
-                        <th className='text-center px-5'></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {userTableList && userTableList.map((user, index) => {
-                        const role = roles.find((role) => user.userRole == role.roleId)
-
-                        return <>
-                            <tr key={`userProjectTable${index}`}>
-                                <td>
-                                    <div className='mt-3'>
-                                        <input className="form-check-input" type="checkbox" name='individualSelectMember' id="individualSelectMember" value={user._id} onChange={handleIndividualcheckbox} />
-                                    </div>
-                                </td>
-                                <td>
-                                    <HStack spacing='20px'>
-                                        <Box w='50px' h='40px'>
-                                            <Avatar name={user.name} size="40" round="25px" />
-                                        </Box>
-                                        <Box w='200px' h='40px' className='mt-3'>
-                                            <p>{user.name}</p>
-                                        </Box>
-                                    </HStack>
-                                </td>
-                                <td>
-                                    <p className='mt-3'>
-                                        {role.roleName}
-                                    </p>
-                                </td>
-                                <td className='text-center'>
-                                    <button className='mt-3' onClick={()=>{if(window.confirm("Are you sure? You want to remove the user(s) from this project !")){
-                                            handleDeleteProjectMember(user._id)
-                                        }}}> <i className="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                        </>
-                    })}
-                </tbody>
-            </table>
-        </div>
-        </ChakraProvider>
     </>
   )
 }
