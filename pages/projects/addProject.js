@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box } from '@chakra-ui/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { Textarea } from '@chakra-ui/react'
+import Image from 'next/image';
+import style from "../../styles/user.module.css"
 
 const AddProject = () => {
 
@@ -26,9 +28,10 @@ const AddProject = () => {
       //console.log('InUseEffectAddProject')
       setValues({ ...values, sessionUser: user_details.name });
     }
-
     //console.log(values)
   }, [user_details])
+
+
 
   const handleInputChange = (e) =>{
       const { name, value } = e.target;
@@ -36,6 +39,11 @@ const AddProject = () => {
       //console.log(values)
   }
   
+
+  const [projectLogoSrc, setProjectLogoSrc] = useState("")
+  const [logoElement, setLogoElement] = useState()
+
+
   const handleSubmit = async (e) =>{
     e.preventDefault();
 
@@ -56,27 +64,67 @@ const AddProject = () => {
           return false
       }
       else{
-        const res = await axios.post('/api/project/addProject', values)
-            if(res.status == 200)
-            {
-              toast("Project added successfully")
-              setValues({
-                  projectname:"",
-                  description:"",
-                  sessionUser: user_details.name
-              })
-              document.getElementById("createProjectForm").reset();
-            }
+          let projectLogoUrl = ""
+          if(projectLogoSrc != "")
+          {
+              const form = e.currentTarget
+              //console.log(form)
+              const fileInput = logoElement
+              // console.log(fileInput)
 
-            if(res.status != 200)
-            {
+              const formData = new FormData()
+
+              formData.append('file',fileInput.files[0])
+              formData.append('upload_preset','spm-uploads')
+
+              const res = await axios.post('https://api.cloudinary.com/v1_1/span-technology/image/upload',formData)
+              const data = await res.data
+              console.log("cloudinary Res" , data)
+              projectLogoUrl = data.secure_url
+          }
+          console.log('All Data', {...values, projectLogoUrl});
+
+          const res = await axios.post('/api/project/addProject', {...values, projectLogoUrl})
+          if(res.status == 200)
+          {
+            toast("Project added successfully")
+            setValues({
+                projectname:"",
+                description:"",
+                sessionUser: user_details.name
+            })
+            setProjectLogoSrc("")
+            document.getElementById("createProjectForm").reset();
+          }
+          else{
               toast.error("Project cannot be added")
             }
       }
     }
-
     //console.log(values);
   }
+
+
+  const handleProjectLogo = (e) => {
+    console.log(e.target);
+    if(e.target.value!="")
+        {
+            let reader = new FileReader();
+            reader.readAsDataURL(e.target.files[0])
+            reader.onload = function(onLoadEvent) {
+                setProjectLogoSrc(onLoadEvent.target.result)
+            };
+            setLogoElement(e.target)
+            // console.log("Image present")
+        }
+        else
+        {
+            setProjectLogoSrc("")
+            setLogoElement("")
+            // console.log("Image not present")
+        }        
+  } 
+
 
   const resetForm = ()=>{
     document.getElementById("createProjectForm").reset();
@@ -112,6 +160,19 @@ const AddProject = () => {
                     <div className='mt-2'>
                         <FormLabel htmlFor='email'>Project Name <span className='text-danger'>*</span></FormLabel>
                         <Input id='projectname' name="projectname" type='text' onChange={handleInputChange} />
+                    </div>
+                    <div className="row ">
+                      <div className="col-4 my-3">
+                          <div className="mb-2">
+                              <FormLabel htmlFor='projectlogo'>Upload Project logo</FormLabel>
+                              <input className="form-control" type="file" name="projectlogo" id="projectlogo" onChange={handleProjectLogo} />
+                          </div>
+                      </div>
+                      <div className={`col-2 align-center mx-5 my-4 ${style.imageContainer}`}>
+                          {
+                              projectLogoSrc != "" && <Image src={projectLogoSrc} width="130px" height="130px" className='' />
+                          }
+                      </div>
                     </div>
                     <div className='mt-2'>
                         <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>

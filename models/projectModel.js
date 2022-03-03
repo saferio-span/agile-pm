@@ -5,6 +5,9 @@ const ProjectSchema = new mongoose.Schema({
   projectname: { 
     type: String
   },
+  logoSrc: { 
+    type: String
+  },
   description: {
     type: String
   },
