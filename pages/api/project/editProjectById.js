@@ -4,11 +4,12 @@ connectDB()
 
 export default async function handler(req,res)
 {
-    const {id, projectname, description, updatedBy} = req.body
-    console.log(req.body);
+    const {id, projectname, logoSrc, description, updatedBy} = req.body
+    console.log('In', req.body);
     await Project.findByIdAndUpdate({_id:id}, 
         {
             projectname, 
+            logoSrc,
             description, 
             updatedBy
         }, (err, data) => {
@@ -21,5 +22,5 @@ export default async function handler(req,res)
             }
     }).clone().catch(function(err){ console.log(err)})
 
-    // res.send(req.body)
+    res.send(req.body)
 }

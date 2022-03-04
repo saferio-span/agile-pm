@@ -86,16 +86,33 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
         })
         dbAssignedUserData = userData.filter((user) => dbAssignedUserIds.includes(user._id))
 
-        
         if(dbAssignedUserData.length != 0){
             assignedUsers = dbAssignedUserData.map((user) => {
                 return {key: user._id, value: user._id, label: user.name}
             })
         }
     }
+    else{
+        dbAssignedUserData = []
+    }
     
+
+    let defaultPageCount
+    if(dbAssignedUsers.length != 0){
+        if(dbAssignedUsers[0].users.length > 0){
+            defaultPageCount = Math.ceil(dbAssignedUsers[0].users.length / 2)
+        }
+        else{
+            defaultPageCount = 1
+        }
+    }
+    else{
+        defaultPageCount = 1
+    }
+    
+
     const [pageNum,setPageNum] = useState(1)
-    const [pageCount,setPageCount] = useState(Math.ceil(dbAssignedUsers[0].users.length / 2))
+    const [pageCount,setPageCount] = useState(defaultPageCount)
     const [searchTerm,setSearchTerm] = useState("")
 
     const [members, setMembers] = useState(membersDefaultList)
@@ -121,6 +138,15 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             setTableList(list);
             setPageCount(Math.ceil(userTableList.length / 2))
         }
+
+        // userList.forEach((user) => {
+        //    tableList.forEach(() => {
+
+        //    })
+        //     document.getElementById(`user_${user._id}`).checked = false
+        // })
+
+
     }, [searchTerm, pageNum, userTableList])
 
 
@@ -207,7 +233,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
     const handleDeleteProjectMember = async (id) => {
         // console.log('Delete Member', id);
-        // console.log('List', userList);
+        //console.log('List', userList);
 
         let updatedListArray = [];
         let updatedUserIds ;
@@ -229,7 +255,6 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
         if(updateProjectMember.status == 200){
             let listArray = [];
-            let listIdArray = [];
             let updatedDrawerList;
             const listIds = updatedUserIds.forEach((data) => {
                 listArray.push(data.id)
@@ -254,45 +279,69 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
 
     const toggleCheckbox = (e) => {
-        var checkboxes = document.getElementsByName('individualSelectMember');
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i] != e.target){
-                checkboxes[i].checked = e.target.checked; 
-            }     
-        }
+        // var checkboxes = document.getElementsByName('individualSelectMember');
+        // for (var i = 0; i < checkboxes.length; i++) {
+        //     if (checkboxes[i] != e.target){
+        //         checkboxes[i].checked = e.target.checked; 
+        //     }     
+        // }
+        tableList.forEach((user) => {
+            document.getElementById(`user_${user._id}`).checked = e.target.checked
+        })
     }
 
 
 
     const handleIndividualcheckbox = (e) => {
-        // console.log('Individual Check', e);
+        console.log('Individual Check', e.target.value);
+
         if(e.target.checked == false){
             document.getElementById("bulkSelectMember").checked = false;
         }
-        else{
-            var checkboxes = document.getElementsByName('individualSelectMember');
-            for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked){
-                    document.getElementById("bulkSelectMember").checked = true;
-                }     
-            }
-        }
+        // else{
+        //     // tableList.forEach((user) => {
+        //     //     document.getElementById(`user_${user._id}`).checked = e.target.checked
+        //     // })
+        //     var checkboxes = document.getElementsByName('individualSelectMember');
+        //     for (var i = 0; i < checkboxes.length; i++) {
+        //         if (checkboxes[i].checked){
+        //             document.getElementById("bulkSelectMember").checked = true;
+        //         }     
+        //     }
+        // }
     }
 
 
-    const handleBulkDelete = () => {
+    const handleBulkDelete = async () => {
         // console.log('Bulk Delete')
+        
         let onlySelectedUser = [];
         let bulkuser = [];
-        var bulkSelect = document.getElementById("bulkSelectMember").checked;
+        let updatedListArray = [];
+        let updatedUserIds ;
+
         var checkboxes = document.getElementsByName('individualSelectMember');
-        if(bulkSelect == true){
+        if(document.getElementById("bulkSelectMember").checked){
             for (var i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked){
                     bulkuser.push(checkboxes[i].value)
                 }
             } 
-            //console.log('Bulk Delete Checked', bulkuser);
+            console.log('Bulk Delete Checked', bulkuser);
+
+            // bulkuser.forEach((id) => {
+            //     userList.forEach((user) => {
+            //         if(user.value != id){
+            //             updatedListArray.push({
+            //                 id: user.value,
+            //                 addedBy: user_details.name
+            //             })
+            //         }
+            //     })
+            // })
+           
+            // updatedUserIds = []
+            // console.log('Bulk Member No', bulkuser)
         }
         else{
             for (var i = 0; i < checkboxes.length; i++) {
@@ -300,18 +349,62 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                     onlySelectedUser.push(checkboxes[i].value)
                 }
             } 
-            //console.log('Only Selected Member', onlySelectedUser)
+            console.log('Only Selected Member', onlySelectedUser)
+
+            onlySelectedUser.forEach((id) => {
+                userList.forEach((user) => {
+                    if(user.value != id){
+                        updatedListArray.push({
+                            id: user.value,
+                            addedBy: user_details.name
+                        })
+                    }
+                })
+            })
+           
+            // updatedUserIds = updatedListArray
+            console.log('Remaining members', updatedListArray)
         }
 
         if(bulkuser.length == 0 && onlySelectedUser == 0){
-            toast.error('Please select the members')
+            toast.error('Please select the members to delete')
         }
+        // else{
+        //     const updateProjectMember = await axios.post('/api/project/assignProject', {
+        //         userIds: updatedUserIds,
+        //         projectId: projectData._id,
+        //     });
+    
+        //     if(updateProjectMember.status == 200){
+        //         let listArray = [];
+        //         let updatedDrawerList;
+        //         const listIds = updatedUserIds.forEach((data) => {
+        //             listArray.push(data.id)
+        //         })
+            
+        //         const upatedListUsers = userData.filter((user) => listArray.includes(user._id));
+        //         if(upatedListUsers.length != 0){
+        //             updatedDrawerList = upatedListUsers.map((user) => {
+        //                 return {key: user._id, value: user._id, label: user.name}
+        //             })
+        //         }
+        //         setUserTableList(upatedListUsers);
+        //         setUserList(updatedDrawerList);
+        //         setDefaultDbList(updatedDrawerList);
+        //         toast('User deleted succesfully');
+        //     }
+        //     else{
+        //         toast.error('User cannot be deleted');
+        //     }
+        // } 
     }
 
 
     const handlePageClick = (data) => {
         //console.log('handlePageClick', data.selected)
         setPageNum(data.selected + 1)
+        // document.getElementById("bulkSelectMember").checked = false
+        // document.getElementsByClassName('individualSelectMember').checked = false
     }
 
     
@@ -424,7 +517,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                     <table className="table table-hover table-striped table-responsive">
                         <thead>
                             <tr>
-                                <th><input className="form-check-input" type="checkbox" name='bulkSelectMember' id="bulkSelectMember" onChange={toggleCheckbox}></input></th>
+                                <th><input className="form-check-input" type="checkbox" name='bulkSelectMember' id="bulkSelectMember" onChange={toggleCheckbox} /></th>
                                 <th>Name</th>
                                 <th>Job Title</th>
                                 <th className='text-center px-5'></th>
@@ -438,7 +531,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                                     <tr key={`userProjectTable${index}`}>
                                         <td>
                                             <div className='mt-3'>
-                                                <input className="form-check-input" type="checkbox" name='individualSelectMember' id="individualSelectMember" value={user._id} onChange={handleIndividualcheckbox} />
+                                                <input className="form-check-input individualSelectMember" type="checkbox" name='individualSelectMember' id={`user_${user._id}`} value={user._id} onChange={handleIndividualcheckbox} />
                                             </div>
                                         </td>
                                         <td>

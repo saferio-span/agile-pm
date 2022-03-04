@@ -37,17 +37,15 @@ const EditProject = ({projectData}) => {
   //console.log('Edit Project', projectData)
 
   const [{user_details},dispatch] = useUserValue();
-  console.log('user details', user_details)
+  //console.log('user details', user_details)
 
   const [user, setUser] = useState(user_details)
 
   const [values, setValues] = useState({
-    id: projectData._id,
-    projectname:projectData.projectname,
-    description:projectData.description,
-    updatedBy: ''
+    projectname: projectData.projectname,
+    description: projectData.description
   });
-  //console.log('values', values);
+  console.log('values', values);
 
   useEffect(() => {
       if(user_details != undefined || user_details != null){
@@ -58,17 +56,17 @@ const EditProject = ({projectData}) => {
       }
   }, [user])
 
+  
   const handleInputChange = (e) => {
     const {name, value} = e.target
     //console.log(name, value)
     setValues({...values, [name]:value})
-    // setValues()
     //console.log(values);
   }
   
 
   const [projectLogoSrc, setProjectLogoSrc] = useState(projectData.logoSrc)
-  const [logoElement, setLogoElement] = useState(false)
+  const [logoElement, setLogoElement] = useState("")
 
 
   const handleSubmit = async(e) => {
@@ -77,12 +75,14 @@ const EditProject = ({projectData}) => {
     const hasEmptyFields = Object.values(values).some(
       (element) => element === ''
     )
+    
+    console.log("Submit", values);
 
     if(hasEmptyFields){
       toast.error('Please fill all the fields');
     }
     else{
-      // console.log(values)
+      //console.log('In Val', values)
       if(values.projectname != projectData.projectname){
         const availablity = await axios.post(`/api/project/findByProject`,{
           projectname: values.projectname
@@ -94,11 +94,15 @@ const EditProject = ({projectData}) => {
         }
       }
 
-      let projectLogoUrl = values.logoSrc
-      if(projectLogoSrc != "")
+
+      let logoSrc = projectLogoSrc;
+      // console.log('logoSrc', logoSrc)
+
+      if(logoElement != "")
       {
+          // console.log('In');
           const form = e.currentTarget
-          const fileInput = Array.from(form.elements).find(({name})=>name==='projectlogo')
+          const fileInput = logoElement
           const formData = new FormData()
           formData.append('file',fileInput.files[0])
           formData.append('upload_preset','spm-uploads')
@@ -106,11 +110,11 @@ const EditProject = ({projectData}) => {
           const res = await axios.post('https://api.cloudinary.com/v1_1/span-technology/image/upload',formData)
           const data = await res.data
           console.log("cloudinary Res" , data)
-          projectLogoUrl = data.secure_url
+          logoSrc = data.secure_url
       }
-      console.log('All Data', {...values, projectLogoUrl});
+      console.log('All Data', {...values, logoSrc});
      
-      const res = await axios.post('/api/project/editProjectById', {...values, projectLogoUrl})
+      const res = await axios.post('/api/project/editProjectById', {...values, logoSrc, id: projectData._id})
       const output = await res.data
       // console.log('Output',output);
 
@@ -146,15 +150,21 @@ const EditProject = ({projectData}) => {
           reader.onload = function(onLoadEvent) {
               setProjectLogoSrc(onLoadEvent.target.result)
           };
-          setLogoElement(true)
+          setLogoElement(e.target)
           // console.log("Image present")
         }
         else
         {
             setProjectLogoSrc(values.logoSrc)
-            setLogoElement(false)
+            setLogoElement("")
             // console.log("Image not present")
         }       
+  }
+
+
+  const handleRemoveLogo = () => {
+    setProjectLogoSrc("");
+    //document.getElementById("editprojectlogo").value = "";
   }
 
   return (
@@ -185,18 +195,21 @@ const EditProject = ({projectData}) => {
                         <Input id='projectname' value={values.projectname} name="projectname" type='text' onChange={handleInputChange} />
                     </div>
                     <div className="row ">
-                        <div className="col-4 my-5">
-                            <div className="mb-3">
+                        <div className="col-4 my-3">
+                            <div className="mb-2">
                                 <FormLabel htmlFor='profile'>Upload Photo</FormLabel>
-                                <input className="form-control" type="file" name="projectlogo" id="editprojectlogo" onChange={handleEditLogo} />
+                                <input className="form-control" type="file" name="logoSrc" id="editprojectlogo" onChange={handleEditLogo} />
                             </div>
                         </div>
-                        {/* <div className={`col-2 align-center mx-5 my-4 ${style.imageContainer}`}>
+                        <div className={`col-2 align-center mx-5 my-4 ${style.imageContainer}`}>
                             {
                                 projectLogoSrc != "" && projectLogoSrc != null && <Image src={projectLogoSrc} width="130px" height="130px" className='' />
                             }
-                        </div> */}
-                      </div>
+                        </div>
+                        {projectLogoSrc && <div className='col-2'>
+                           <button className="btn btn-secondary mt-5" onClick={handleRemoveLogo}>Remove Logo</button>
+                        </div> }
+                    </div>
                     <div className='mt-2'>
                         <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>
                         {/* <Input id='description' value={values.description} name="description" type='text' onChange={handleInputChange} /> */}

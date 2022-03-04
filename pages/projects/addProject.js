@@ -41,7 +41,7 @@ const AddProject = () => {
   
 
   const [projectLogoSrc, setProjectLogoSrc] = useState("")
-  const [logoElement, setLogoElement] = useState()
+  const [logoElement, setLogoElement] = useState("")
 
 
   const handleSubmit = async (e) =>{
@@ -50,6 +50,8 @@ const AddProject = () => {
     const hasEmptyFields = Object.values(values).some(
       (element) => element === ''
     )
+    console.log("Submit", values);
+
     if (hasEmptyFields) {
       toast.error('Please fill in all fields')
     }
@@ -134,6 +136,13 @@ const AddProject = () => {
     })
   }
 
+  const handleRemoveLogo = () => {
+    setProjectLogoSrc("");
+    setLogoElement("")
+    document.getElementById("projectlogo").value = "";
+  }
+
+
   return (
     <>
       <Navbar />
@@ -173,6 +182,9 @@ const AddProject = () => {
                               projectLogoSrc != "" && <Image src={projectLogoSrc} width="130px" height="130px" className='' />
                           }
                       </div>
+                      {projectLogoSrc && <div className='col-2'>
+                           <button className="btn btn-secondary mt-5" onClick={handleRemoveLogo}>Remove Logo</button>
+                        </div> }
                     </div>
                     <div className='mt-2'>
                         <FormLabel htmlFor='userName'>Project description<span className='text-danger'>*</span> </FormLabel>

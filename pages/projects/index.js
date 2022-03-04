@@ -143,7 +143,7 @@ const ProjectListPage = ({projectsList}) => {
                     <table className="table table-hover table-striped table-responsive">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th><input className="form-check-input" type="checkbox" name='bulkSelectProject' id="bulkSelectProject" /></th>
                                 <th>Project Name</th>
                                 <th>Description</th>
                                 <th className='text-center px-5'>Actions</th>
@@ -153,7 +153,7 @@ const ProjectListPage = ({projectsList}) => {
                             {project && project.map((data, index) => {
                                 return <>
                                     <tr key={`{index}_row`}>
-                                        <td>{index+1}</td>
+                                        <td><input className="form-check-input individualSelectProject" type="checkbox" name='individualSelectProject' id={`project_${data._id}`} value={data._id} /></td>
                                         <td>
                                             <Link href={`/projects/assignProject/${data._id}`}>
                                                 <a>{data.projectname}</a>
