@@ -76,7 +76,7 @@ const Navbar = () => {
             setUserDetails()
         }
         setUrl(window.location.origin)
-        if(status=="unauthenticated")
+        if(status=="unauthenticated" || session == null)
         {
             console.log(`Inside Route`)
             router.push('/')

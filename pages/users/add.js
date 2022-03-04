@@ -189,18 +189,20 @@ const Add = (props) => {
             <ToastContainer />
             <ChakraProvider>
                 <div>
-                    <Heading as='h3' size='md' className='mt-3 mx-3'>
+                    
                         <div className="row">
                             <div className="col-11">
-                                <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Add User
+                                <p className='mt-3 mx-3 h5'>
+                                    <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Add User
+                                </p>  
                             </div>
-                            <div className="col-1">
+                            <div className="col-1 mt-3">
                                 <Link href="/users">
                                     <a className="btn btn-danger">Back</a>
                                 </Link>
                             </div>
                         </div>
-                    </Heading>  
+                    
                     <Box className='mt-3 mx-5'>
 
                         
