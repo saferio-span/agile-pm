@@ -12,6 +12,7 @@ import Select from 'react-select'
 import Image from 'next/image';
 import { FormControl,FormLabel,FormErrorMessage,Input,FormHelperText,Heading,Text,Checkbox, Box,ChakraProvider } from '@chakra-ui/react'
 import style from "../../../styles/user.module.css"
+import HashLoader from "react-spinners/HashLoader";
 
 export const getServerSideProps = async (context)=>{
     const { req, query, params } = context;
@@ -53,11 +54,13 @@ const Edit = ({userData, roles}) => {
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
+        setLoading(true)
         console.log('Submit', user)
         const hasEmptyField = Object.values(user).some((element)=>element==='')
         if(hasEmptyField) 
         {
             toast.error("Please fill in all fields which are mandatory(*)")
+            setLoading(false)
             return false
         }
         else
@@ -99,7 +102,7 @@ const Edit = ({userData, roles}) => {
             {
                 toast.error("User cannot be updated")
             }
-            
+            setLoading(false)
         }
     }
 
@@ -169,11 +172,19 @@ const Edit = ({userData, roles}) => {
         <Navbar />
         <div className='custom-body'>
             <ToastContainer />
+            {
+                // Loader
+                loading && <>
+                    <div className="background-overlay">
+                        <div className='loader'><HashLoader className="my-5" color="#F6E05E" loading={loading} size={100} /></div>
+                    </div>
+                </>
+            }
             <ChakraProvider>
                 <div>
-                    <Heading as='h3' size='md' className='mt-3 mx-3'>
+                    <p className='mt-3 mx-3 h5'>
                         <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link> {`>`} Edit User
-                    </Heading>  
+                    </p>  
                     <Box className='mt-3 mx-5'>
 
                         
@@ -220,6 +231,9 @@ const Edit = ({userData, roles}) => {
                                 <div className='mt-2'>
                                     <div className="form-check form-switch">
                                         <input className="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked={user.isActive} onChange={handleSelectedState} />
+                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                            Active / Inactive
+                                        </label>
                                     </div>
                                 </div>
 

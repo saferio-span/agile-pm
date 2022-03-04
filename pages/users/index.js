@@ -8,7 +8,7 @@ import axios from 'axios';
 import { toast,ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '@chakra-ui/icons';
-import { Input, InputGroup,  InputLeftElement,ChakraProvider} from '@chakra-ui/react'
+import { Input, InputGroup,  InputLeftElement,Heading,ChakraProvider} from '@chakra-ui/react'
 import absoluteUrl from 'next-absolute-url'
 import ReactPaginate from "react-paginate"
 import Avatar from 'react-avatar';
@@ -101,6 +101,7 @@ const UserlistPage = (props) => {
         const showGlobalActive = users.some((user)=>checkValues[`${user._id}_checked`] == true)
 
         const checkAllState = users.every((user)=>checkValues[`${user._id}_checked`] == true)
+        
 
         // console.log('Global Active',showGlobalActive)
 
@@ -300,6 +301,11 @@ const UserlistPage = (props) => {
         <div className='custom-body'>
             <ToastContainer />
             <div className='container-fluid'>
+
+                    <p className='mt-3 mx-3 h5'>
+                        <Link href={`/dashboard`}>Admin</Link> {`>`} <Link href={`/users`}>User</Link>
+                    </p> 
+
                 <div className='row mt-3'>
                     <ChakraProvider>
                     <div className="col-3">
