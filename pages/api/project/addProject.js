@@ -4,14 +4,15 @@ connectDB()
 
 export default async function handler(req,res)
 {
-    const {projectname, description, sessionUser} = req.body    
+    const {projectname, description, projectLogoUrl, sessionUser } = req.body    
 
     const project = new Project()
     project.projectname = projectname
+    project.logoSrc = projectLogoUrl
     project.description = description
     project.createdBy  = sessionUser
 
-    console.log(project);
+    console.log('project', project);
 
     await project.save(
         (err, projectCreated)=>{

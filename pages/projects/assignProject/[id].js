@@ -19,8 +19,11 @@ import { useDisclosure } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react'
 import Router from 'next/router'
 import style from '../../../styles/project.module.css'
+import ReactPaginate from "react-paginate"
+
 
 const animatedComponents = makeAnimated();
+
 
 export const getServerSideProps = async (context) => {
     const {req, res, params} = context;
@@ -63,8 +66,6 @@ export const getServerSideProps = async (context) => {
 const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
 
     //console.log('dbAssignedUsers', dbAssignedUsers);
-    // document.getElementById("bulkDeleteAssignedMembers").style.display = "none";
-
     const [{user_details},dispatch] = useUserValue();
 
     const rolesOptions = roles.map(role =>{
@@ -74,6 +75,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
     const membersDefaultList = userData.map(user =>{
         return { key: user._id, value: user._id, label: user.name }
     })
+
 
     let dbAssignedUserIds = [];
     let dbAssignedUserData = null;
@@ -91,13 +93,36 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             })
         }
     }
-    //console.log('dbAssignedUserData', dbAssignedUserData);
     
+    const [pageNum,setPageNum] = useState(1)
+    const [pageCount,setPageCount] = useState(Math.ceil(dbAssignedUsers[0].users.length / 2))
+    const [searchTerm,setSearchTerm] = useState("")
 
     const [members, setMembers] = useState(membersDefaultList)
     const [userList, setUserList] = useState(assignedUsers);
     const [userTableList, setUserTableList] = useState(dbAssignedUserData); 
+    const [tableList, setTableList] = useState([]);
     const [defaultDbList, setDefaultDbList] = useState(assignedUsers);
+
+
+    useEffect(() => {
+        if(searchTerm != ""){
+            const searchResult = userTableList.filter(user=>{
+                if(user.name.includes(searchTerm))
+                {
+                    return user
+                }
+            })
+            setTableList(searchResult);
+            setPageCount(Math.ceil(searchResult.length / 2))
+        }
+        else{
+            let list = userTableList.slice((pageNum*2)-2, pageNum*2);
+            setTableList(list);
+            setPageCount(Math.ceil(userTableList.length / 2))
+        }
+    }, [searchTerm, pageNum, userTableList])
+
 
 
     const handleRoleOption = (e) => {
@@ -129,7 +154,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
      const handleAssign = async () => {
         let userIds = [];
         let updatedIdList = [];
-        // let updatedUserIds;
+        let drawerList = [];
 
         if(userList != null){
             // console.log('Handle Assign', userList)
@@ -154,9 +179,20 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                     updatedIdList.push(user.id)
                   })
                 const upatedUsers = userData.filter((user) => updatedIdList.includes(user._id));
-                setUserTableList(upatedUsers);
                 //console.log('upatedUsers', upatedUsers)
-                //console.log('Table List', userTableList)
+                if(upatedUsers.length != 0){
+                    drawerList = upatedUsers.map((user) => {
+                        return {key: user._id, value: user._id, label: user.name}
+                    })
+                }
+                //console.log('drawerList',drawerList)
+
+                let upatedTableList = upatedUsers;
+                setUserTableList(upatedTableList);
+                setUserList(drawerList);
+                setDefaultDbList(drawerList);
+                console.log("Page Count",Math.ceil(upatedUsers.length / 2))
+                setPageCount(Math.ceil(upatedUsers.length / 2))
               }
               else{
                 toast("Project cannot be assigned")
@@ -185,8 +221,6 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             }
         })
         updatedUserIds = updatedListArray
-        //const proId = projectData.projectId
-        //console.log("UpdatedList", updatedListArray);
 
         const updateProjectMember = await axios.post('/api/project/assignProject', {
             userIds: updatedUserIds,
@@ -210,8 +244,6 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
             setUserTableList(upatedListUsers);
             setUserList(updatedDrawerList);
             setDefaultDbList(updatedDrawerList);
-            // assignedUsers = updatedDrawerList;
-            //console.log('Updated List', upatedListUsers)
             toast('User deleted succesfully');
         }
         else{
@@ -260,7 +292,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                     bulkuser.push(checkboxes[i].value)
                 }
             } 
-            console.log('Bulk Delete Checked', bulkuser);
+            //console.log('Bulk Delete Checked', bulkuser);
         }
         else{
             for (var i = 0; i < checkboxes.length; i++) {
@@ -268,13 +300,26 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                     onlySelectedUser.push(checkboxes[i].value)
                 }
             } 
-            console.log('Only Selected Member', onlySelectedUser)
+            //console.log('Only Selected Member', onlySelectedUser)
         }
 
         if(bulkuser.length == 0 && onlySelectedUser == 0){
             toast.error('Please select the members')
         }
     }
+
+
+    const handlePageClick = (data) => {
+        //console.log('handlePageClick', data.selected)
+        setPageNum(data.selected + 1)
+    }
+
+    
+    const handleSearch = (e) => {
+        //console.log('handleSearch', e.target.value)
+        setSearchTerm(e.target.value);
+    }
+
 
 
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -301,7 +346,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                                     pointerEvents='none'
                                     children={<SearchIcon color='gray.300' />}
                                 />
-                                <Input type='tel' placeholder='Search Users...' />
+                                <Input type='text' onChange={handleSearch} placeholder='Search Users...' />
                             </InputGroup>
                         </div>
                         <div className='col-3 offset-3'>
@@ -386,7 +431,7 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {userTableList && userTableList.map((user, index) => {
+                            {tableList && tableList.map((user, index) => {
                                 const role = roles.find((role) => user.userRole == role.roleId)
 
                                 return <>
@@ -421,6 +466,30 @@ const AssignProject = ({roles, userData, projectData, dbAssignedUsers}) => {
                             })}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="row">
+                    <div className="col offset-s4">
+                        <ReactPaginate
+                            previousLabel={"<<"}
+                            nextLabel={">>"}
+                            breakLabel={"..."}
+                            pageCount={pageCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={3}
+                            onPageChange={handlePageClick}
+                            containerClassName={"pagination justify-content-center"}
+                            pageClassName={"page-item"}
+                            pageLinkClassName={"page-link"}
+                            previousClassName={"page-item"}
+                            previousLinkClassName={"page-link"}
+                            nextClassName={"page-item"}
+                            nextLinkClassName={"page-link"}
+                            breakClassName={"page-item"}
+                            breakLinkClassName={"page-link"}
+                            activeClassName={"active"}
+                        />
+                    </div>
                 </div>
             </ChakraProvider>
         </div>

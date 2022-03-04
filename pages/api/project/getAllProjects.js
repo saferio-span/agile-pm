@@ -11,27 +11,27 @@ export default async function handler(req,res)
         let total;
         let projects;
 
-        console.log('page', page);
-        console.log('search', search);
+        // console.log('page', page);
+        // console.log('search', search);
 
         if(search == "null"){
             total = await Project.countDocuments({});
             projects = await Project.find()
                 .limit(PAGE_SIZE)
                 .skip(PAGE_SIZE * page);
-            console.log('In');
-            console.log(total);
-            console.log(projects);
+            // console.log('In');
+            // console.log(total);
+            // console.log(projects);
         }
         else{
             total = await Project.find({ projectname :  {'$regex': search}}).count()
             projects = await Project.find({ projectname :  {'$regex': search}})
             .limit(PAGE_SIZE)
             .skip(PAGE_SIZE * page);
-            console.log('Search', search);
-            console.log('Out', projects);
-            console.log(total);
-            console.log(projects);
+            // console.log('Search', search);
+            // console.log('Out', projects);
+            // console.log(total);
+            // console.log(projects);
         }
         
         // res.send([])

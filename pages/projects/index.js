@@ -184,38 +184,6 @@ const ProjectListPage = ({projectsList}) => {
                         </tbody>
                     </table>
                 </div>
-                
-                {/* <div className="mx-2 my-2 ">
-                    <table className="table table-hover table-striped table-responsive">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Page of {pageNumber + 1}</th>
-                                <th>Test Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {project && project.map((data, index) => {
-                                return <>
-                                    <tr key={`{index}_row`}>
-                                        <td>{index+1}</td>
-                                        <td>{data.projectname}</td>
-                                        <td>{data.description}</td>
-                                    </tr>
-                                    </>
-                            })}
-                        </tbody>
-                    </table>
-                </div> */}
-
-                {/* <div className='container-fluid'>
-                    <div className="row">
-                        <div className="col-3 offset-5">
-                            {pages.map((pageIndex) => <button className='btn btn-primary mx-1' onClick={() => handlePageClick(pageIndex)}>{pageIndex + 1}</button>
-                            )}
-                        </div>
-                    </div>           
-                </div>         */}
 
                 <div className="row">
                     <div className="col offset-s4">
