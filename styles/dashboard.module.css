@@ -1,0 +1,29 @@
+.dashboardBackground{
+  background-color: #F3F3F3;
+  height: auto;
+}
+
+.iconBlueBg
+{
+  color: #B9D3FC;
+}
+
+.peopleIcon
+{
+  display: inline;
+  font-size: 20pt;
+}
+
+.cardIcon
+{
+  font-size: 50pt;
+  color: #B9D3FC;
+}
+
+.badgeBg{
+  background-color: #F3F3F3;
+}
+
+/* .leftContainer{
+  margin-left: 10px;
+} */
